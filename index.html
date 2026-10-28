@@ -155,6 +155,15 @@ details pre{white-space:pre-wrap;font-size:11px;background:#fff;padding:8px;bord
 .guide.ok{border-color:#7EE0B8}.guide.dup{border-color:#F2C14E}
 .scan-msg{margin:12px 16px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.14);font-size:15px;line-height:1.5;min-height:54px;display:flex;align-items:center;gap:10px}
 .scan-msg.ok{background:#2E8A64}.scan-msg.dup{background:#7A6115}.scan-msg.err{background:#8A2E2E}
+.scan-msg .msgtext{flex:1}
+.scan-msg .undo{background:rgba(255,255,255,.22);border:none;color:#fff;border-radius:999px;padding:6px 12px;font-size:14px;flex:none}
+.scan-bottom{display:flex;align-items:center;gap:14px;padding:0 16px 12px}
+.scan-bottom span{font-size:12px;color:#BBB;line-height:1.5}
+#shutter{width:64px;height:64px;border-radius:50%;border:4px solid #fff;background:var(--purple);flex:none}
+#shutter:active{transform:scale(.94)}
+#shutter:disabled{opacity:.4}
+.keybox{margin:0 16px;background:#fff;border-radius:10px;padding:12px;font-size:14px;line-height:1.7;user-select:all;-webkit-user-select:all;word-break:break-all}
+.aion{display:inline-block;font-size:11px;background:var(--purple-soft);color:var(--purple-d);border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:middle}
 .pulse{width:10px;height:10px;border-radius:50%;background:#C9A6DE;flex:none;animation:pl 1.2s ease-in-out infinite}
 @keyframes pl{50%{opacity:.25}}
 @media (prefers-reduced-motion:reduce){.pulse{animation:none}}
@@ -187,6 +196,7 @@ details pre{white-space:pre-wrap;font-size:11px;background:#fff;padding:8px;bord
     </div>
   </div>
   <div class="scan-msg" id="scanMsg"><span class="pulse"></span><span id="scanText">カメラを起動中…</span></div>
+  <div class="scan-bottom"><button id="shutter" aria-label="今すぐ読み取る"></button><span>自動で読み取ります。うまくいかない時はボタンで撮影</span></div>
 </div>
 
 <input type="file" id="pick" accept="image/*" multiple hidden>
@@ -273,7 +283,7 @@ function renderInput(){
   const f=S.form,isExp=S.inputType==="expense";
   const recent=entries.slice().sort((a,b)=>(b.created||0)-(a.created||0)).slice(0,3);
   view.innerHTML=`
-    ${isExp?`<button class="scancard" id="scanBtn"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M8 9h8M8 12h8M8 15h5"/></svg></span><span><b>レシートをスキャン</b><span>カメラにかざすだけで自動で登録</span></span></button>
+    ${isExp?`<button class="scancard" id="scanBtn"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M8 9h8M8 12h8M8 15h5"/></svg></span><span><b>レシートをスキャン${AI.key?'<span class="aion">AI</span>':""}</b><span>カメラにかざすだけで自動で登録</span></span></button>
     <div class="subacts"><button id="pickBtn">写真から読み取る</button></div>`:""}
     <div class="seclabel">${isExp?"手入力する場合":"収入を入力"}</div>
     <div class="group"><label class="row"><input id="fAmount" class="left" inputmode="numeric" placeholder="金額" value="${esc(f.amount)}"></label></div>
@@ -405,6 +415,7 @@ function renderSettings(){
     </div>
     <div class="setlabel">スキャン</div>
     <div class="setgroup">
+      <button class="row" id="sAI"><span>AI読み取り（Google Gemini）</span><span class="val">${AI.key?"オン":"未設定"}<span class="chev">›</span></span></button>
       <div class="row"><span>スキャンで登録した件数</span><span class="val">${scans}件</span></div>
       <button class="row" id="sHow"><span>自動登録・二重登録防止のしくみ</span><span class="chev">›</span></button>
     </div>
@@ -415,6 +426,7 @@ function renderSettings(){
     </div>
     <div class="note">記録 ${entries.length}件 ・ 広告なし</div>`;
   view.querySelector("#sCsv").onclick=exportCSV;
+  view.querySelector("#sAI").onclick=openAISettings;
   view.querySelector("#sBk").onclick=()=>shareOrDownload(`kakeibo-${today()}.json`,JSON.stringify(entries),"application/json");
   view.querySelector("#sRs").onclick=()=>document.getElementById("rsFile").click();
   view.querySelector("#sHow").onclick=()=>infoSheet("自動登録のしくみ",`
@@ -431,6 +443,31 @@ function renderSettings(){
       <div class="btnrow"><button class="btn-g" data-close>やめる</button><button class="btn-d" id="yes">削除する</button></div>`);
     sheet.querySelector("#yes").onclick=async()=>{await DB.clear();entries=[];closeSheet();toast("削除しました");render()};
   };
+}
+function openAISettings(){
+  openSheet(`<div class="sh"><button data-close>閉じる</button><b>AI読み取り</b><span style="width:52px"></span></div>
+    <div class="note" style="font-size:15px">GoogleのAI（Gemini）でレシートを読むと、正確さが大きく上がります。無料で使えます。<br><br>
+    <b>設定方法</b><br>1. 下のURLをSafariで開く<br>2. Googleアカウントでログイン<br>3.「Create API key」（APIキーを作成）を押す<br>4. できたキーをコピーして、下に貼り付けて「保存」</div>
+    <div class="keybox">https://aistudio.google.com/apikey</div>
+    <div class="group"><label class="row"><input id="aiKey" class="left" placeholder="APIキーを貼り付け" autocomplete="off" autocapitalize="off" spellcheck="false" value="${esc(AI.key)}"></label></div>
+    <div class="btnrow"><button class="btn-g" id="aiTest">接続テスト</button><button class="btn-p" id="aiSave">保存</button></div>
+    ${AI.key?'<div class="btnrow" style="padding-top:10px"><button class="btn-d" id="aiDel">AI読み取りをやめる</button></div>':""}
+    <div class="note" id="aiMsg"></div>
+    <div class="note">・APIキーはこのiPhoneの中だけに保存されます（GitHubには載りません）。<br>
+    ・AIを使うと、レシートの画像がGoogleに送られます。無料プランでは、Googleが送られたデータをサービス改善に使う場合があります。レシートにはカード番号の下4桁などが写ることがあります。<br>
+    ・AIを使わない場合は、iPhoneの中だけで読み取ります（精度は下がります）。<br>
+    ・無料枠の上限に達したときは、自動で端末内の読み取りに切り替わります。</div>`);
+  const msg=t=>sheet.querySelector("#aiMsg").textContent=t;
+  const val=()=>sheet.querySelector("#aiKey").value.trim();
+  sheet.querySelector("#aiTest").onclick=async()=>{
+    const old=AI.key;AI.key=val();msg("確認中…");
+    try{await aiRun([{text:"「OK」とだけ返してください"}],false);msg("✓ つながりました（"+AI.good+"）")}
+    catch(e){msg(aiErrMsg(e&&e.code))}
+    finally{AI.key=old}
+  };
+  sheet.querySelector("#aiSave").onclick=()=>{AI.key=val();AI.good=null;AI.pausedUntil=0;closeSheet();toast(AI.key?"AI読み取りをオンにしました":"APIキーを削除しました");render()};
+  const del=sheet.querySelector("#aiDel");
+  if(del)del.onclick=()=>{AI.key="";closeSheet();toast("AI読み取りをオフにしました");render()};
 }
 function infoSheet(t,html){openSheet(`<div class="sh"><button data-close>閉じる</button><b>${esc(t)}</b><span style="width:52px"></span></div><div class="note" style="font-size:15px">${html}</div>`)}
 function exportCSV(){
@@ -620,11 +657,95 @@ function findDuplicate(e){
   });
 }
 
+/* ================= AI読み取り（Google Gemini・任意） =================
+   APIキーはこのiPhoneの中（localStorage）だけに保存。GitHubには載りません。 */
+const AI={
+  get key(){try{return localStorage.getItem("gemini_key")||""}catch(e){return ""}},
+  set key(v){try{v?localStorage.setItem("gemini_key",v):localStorage.removeItem("gemini_key")}catch(e){}},
+  models:["gemini-3.8-flash","gemini-flash-latest","gemini-3.5-flash-lite","gemini-flash-lite-latest"],
+  good:null,pausedUntil:0,
+  get on(){return !!this.key&&Date.now()>this.pausedUntil}
+};
+const AI_PROMPT=`この画像は日本のレシート（領収証）です。内容を正確に読み取ってください。
+- store: 店名（チェーン名＋店舗名。例「バロー ルビットタウン刈谷店」）
+- date: 購入日 YYYY-MM-DD
+- time: 購入時刻 HH:MM（なければ空文字）
+- receipt_no: レシート番号・取引番号（なければ空文字）
+- total: 実際に支払った税込の合計金額（「合計」の金額）。お預り・お釣り・小計・税額ではない
+- items: 購入した商品ごとの {name, price}。値引きはマイナス。レジ袋も含める
+- category: 店と商品から最も合うもの
+- is_receipt: レシートが写っていなければ false
+文字が読みにくい部分は、レシートの文脈から最も可能性の高いものを選んでください。`;
+const AI_SCHEMA={type:"OBJECT",properties:{
+  is_receipt:{type:"BOOLEAN"},store:{type:"STRING"},date:{type:"STRING"},time:{type:"STRING"},receipt_no:{type:"STRING"},
+  total:{type:"INTEGER"},category:{type:"STRING",enum:EXP_CATS.map(c=>c[0])},
+  items:{type:"ARRAY",items:{type:"OBJECT",properties:{name:{type:"STRING"},price:{type:"INTEGER"}},required:["name","price"]}}},
+  required:["is_receipt","store","date","time","total","category","items"]};
+function blobToB64(blob){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(",")[1]);r.onerror=rej;r.readAsDataURL(blob)})}
+async function geminiCall(model,parts,json){
+  const body={contents:[{parts}],generationConfig:{temperature:0}};
+  if(json){body.generationConfig.responseMimeType="application/json";body.generationConfig.responseSchema=AI_SCHEMA}
+  let res;
+  try{res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+    {method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":AI.key},body:JSON.stringify(body)})}
+  catch(e){return{err:"net"}}
+  if(res.ok){const j=await res.json();return{text:(j.candidates?.[0]?.content?.parts||[]).filter(p=>!p.thought).map(p=>p.text||"").join("")}}
+  const t=await res.text().catch(()=>"");
+  if(/API[_ ]?key|API_KEY_INVALID|PERMISSION_DENIED|unregistered callers/i.test(t))return{err:"key"};
+  return{err:res.status===429?"quota":res.status===404?"model":"fail"};
+}
+async function aiRun(parts,json){
+  const order=AI.good?[AI.good,...AI.models.filter(m=>m!==AI.good)]:AI.models;
+  let last="fail";
+  for(const m of order){
+    const r=await geminiCall(m,parts,json);
+    if(!r.err){AI.good=m;return r.text}
+    if(r.err==="key"||r.err==="net")throw{code:r.err};
+    last=r.err==="quota"&&last!=="fail"?last:r.err;
+  }
+  throw{code:last};
+}
+async function aiReadReceipt(blob){
+  const txt=await aiRun([{inline_data:{mime_type:"image/jpeg",data:await blobToB64(blob)}},{text:AI_PROMPT}],true);
+  return JSON.parse(txt);
+}
+function aiEntry(r){
+  const items=(Array.isArray(r.items)?r.items:[]).slice(0,40).map(i=>({name:String(i.name||"").trim(),price:Math.round(+i.price||0)})).filter(i=>i.name&&i.price);
+  const store=String(r.store||"").trim();
+  const p={store,date:/^20\d{2}-\d{2}-\d{2}$/.test(r.date)?r.date:today(),time:/^\d{1,2}:\d{2}$/.test(r.time||"")?r.time.padStart(5,"0"):"",
+    receiptNo:String(r.receipt_no||"").replace(/\D/g,""),total:Math.round(+r.total||0),
+    category:EXP_CATS.some(c=>c[0]===r.category)?r.category:guessCategory(store,""),items,raw:""};
+  return makeEntry(p);
+}
+function aiErrMsg(code){
+  return code==="key"?"APIキーが正しくありません。設定 →「AI読み取り」で確認してください"
+    :code==="quota"?"AIの無料枠の上限に達しました。しばらくは端末内の読み取りを使います"
+    :code==="net"?"インターネットにつながっていません"
+    :"AIで読み取れませんでした。もう一度かざしてください";
+}
+/* 画像をAI用のJPEGに（最大2000px・メモリ上だけ） */
+function toJpeg(src,crop){
+  const s=Math.min(1,2000/Math.max(crop.w,crop.h));
+  const c=document.createElement("canvas");c.width=Math.round(crop.w*s);c.height=Math.round(crop.h*s);
+  c.getContext("2d").drawImage(src,crop.x,crop.y,crop.w,crop.h,0,0,c.width,c.height);
+  return new Promise(r=>c.toBlob(b=>{c.width=c.height=0;r(b)},"image/jpeg",0.85));
+}
+/* 同じレシートを何度もAIに送らないための文字の似かた */
+function textSim(a,b){
+  if(!a||!b)return 0;
+  const g=s=>{const set=new Set();s=s.replace(/\s/g,"");for(let i=0;i<s.length-1;i++)set.add(s.slice(i,i+2));return set};
+  const A=g(a),B=g(b);let n=0;A.forEach(x=>{if(B.has(x))n++});return n/Math.max(1,Math.min(A.size,B.size));
+}
+
 /* ================= カメラでスキャン ================= */
 const scannerEl=document.getElementById("scanner"),video=document.getElementById("video"),vbox=document.getElementById("vbox"),
   stage=document.getElementById("stage"),guide=document.getElementById("guide"),scanMsgEl=document.getElementById("scanMsg"),scanText=document.getElementById("scanText");
 let stream=null,scanning=false,sessionAdded=[];
-function scanMsg(t,cls=""){scanText.textContent=t;scanMsgEl.className="scan-msg "+cls;guide.className="guide "+(cls==="err"?"":cls)}
+function scanMsg(t,cls="",undoId){
+  scanText.innerHTML=`<span class="msgtext">${esc(t)}</span>${undoId?`<button class="undo" id="undoBtn">取り消す</button>`:""}`;
+  scanMsgEl.className="scan-msg "+cls;guide.className="guide "+(cls==="err"?"":cls);
+  if(undoId)document.getElementById("undoBtn").onclick=async()=>{await removeEntry(undoId);sessionAdded=sessionAdded.filter(x=>x.id!==undoId);updateCount();lastSent="";scanMsg("取り消しました")};
+}
 function fitVideo(){const vw=video.videoWidth,vh=video.videoHeight;if(!vw)return;
   const s=Math.min(stage.clientWidth/vw,stage.clientHeight/vh);vbox.style.width=Math.round(vw*s)+"px";vbox.style.height=Math.round(vh*s)+"px"}
 addEventListener("resize",fitVideo);video.addEventListener("loadedmetadata",fitVideo);video.addEventListener("resize",fitVideo);
@@ -632,9 +753,9 @@ async function waitFor(fn,ms){const t=Date.now();while(Date.now()-t<ms){if(fn())
 document.getElementById("closeScan").onclick=closeScanner;
 
 async function openScanner(){
-  if(typeof Tesseract==="undefined"){toast("読み取り機能を読み込めません。ネットにつないで開き直してください");return}
+  if(typeof Tesseract==="undefined"&&!AI.on){toast("読み取り機能を読み込めません。ネットにつないで開き直してください");return}
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){toast("このブラウザではカメラが使えません。Safariで開いてください");return}
-  sessionAdded=[];updateCount();vbox.style.width=vbox.style.height="0";
+  sessionAdded=[];lastSent="";holdUntil=0;aiBusy=false;updateCount();vbox.style.width=vbox.style.height="0";
   scannerEl.hidden=false;scanMsg("カメラを起動中…");
   try{
     stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:"environment"},width:{ideal:1920},height:{ideal:1440}}});
@@ -649,6 +770,7 @@ async function openScanner(){
   if(!ok){scanMsg("カメラの映像が届きません。一度「完了」を押して、もう一度お試しください。","err");return}
   fitVideo();
   scanning=true;
+  if(typeof Tesseract==="undefined"){scanMsg("レシートを枠に入れて、下のボタンで撮影してください");return}
   if(!workerP)scanMsg("読み取り機能を準備中…（初回のみ少し時間がかかります）");
   try{await getWorker()}catch(e){scanMsg("読み取り機能を読み込めませんでした。ネットにつないでください。","err");return}
   scanLoop();
@@ -663,24 +785,63 @@ function closeScanner(){
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&!scannerEl.hidden)closeScanner()});
 function updateCount(){document.getElementById("scanCount").textContent="登録 "+sessionAdded.length+"件"}
 
+let holdUntil=0,lastSent="",lastSentAt=0,aiBusy=false;
+const cropOf=()=>{const vw=video.videoWidth,vh=video.videoHeight;return{x:vw*0.08,y:vh*0.04,w:vw*0.84,h:vh*0.92}};
+async function registerScanned(e){
+  const dup=findDuplicate(e);
+  if(dup){scanMsg(`登録済みのレシートです（${dup.memo||dup.category} ${yenJ(dup.amount)}）`,"dup");return}
+  await addEntry(e);sessionAdded.push(e);updateCount();
+  scanMsg(`✓ 登録しました　${e.category}　${yenJ(e.amount)}`,"ok",e.id);
+}
+/* AIで読み取る（自動・シャッター共通） */
+async function aiCapture(raw){
+  if(aiBusy||!video.videoWidth)return;
+  aiBusy=true;document.getElementById("shutter").disabled=true;
+  scanMsg("AIで読み取り中…");
+  lastSent=raw||lastSent;lastSentAt=Date.now();
+  try{
+    const r=await aiReadReceipt(await toJpeg(video,cropOf()));
+    if(!scanning)return;
+    if(!r||!r.is_receipt||!(r.total>0))scanMsg("レシートを読み取れませんでした。全体が枠に入るようにかざしてください","err");
+    else await registerScanned(aiEntry(r));
+  }catch(e){
+    scanMsg(aiErrMsg(e&&e.code),"err");
+    if(e&&e.code==="quota")AI.pausedUntil=Date.now()+60000;
+  }finally{
+    aiBusy=false;document.getElementById("shutter").disabled=false;holdUntil=Date.now()+3000;
+  }
+}
+document.getElementById("shutter").onclick=async()=>{
+  if(!scanning)return;
+  if(AI.on){lastSent="";aiCapture("");return}
+  /* AIなし：端末内の読み取りで今のフレームを強制チェック */
+  forceOnce=true;scanMsg("読み取り中…");
+};
+let forceOnce=false;
 async function scanLoop(){
-  let holdUntil=0;
   scanMsg("レシートを枠の中にかざしてください");
   while(scanning){
-    const vw=video.videoWidth,vh=video.videoHeight;if(!vw){await sleep(200);continue}
-    const canvas=ocrCanvas(video,{x:vw*0.08,y:vh*0.04,w:vw*0.84,h:vh*0.92});
+    if(aiBusy||!video.videoWidth){await sleep(200);continue}
+    const canvas=ocrCanvas(video,cropOf());
     progressCb=()=>{};
     let data;try{({data}=await (await getWorker()).recognize(canvas))}catch(e){await sleep(500);continue}
     canvas.width=canvas.height=0;
     if(!scanning)break;
+    if(aiBusy)continue;
     const p=parseReceipt(data.text||"");
-    if(p.strongTotal&&p.total>0&&(p.dateFound||p.store||p.time)){
-      const e=makeEntry(p),dup=findDuplicate(e);
-      if(dup)scanMsg(`登録済みのレシートです（${dup.memo||dup.category} ${yenJ(dup.amount)}）`,"dup");
-      else{await addEntry(e);sessionAdded.push(e);updateCount();scanMsg(`✓ 登録しました　${e.category}　${yenJ(e.amount)}`,"ok")}
-      holdUntil=Date.now()+2500;
-    }else if(Date.now()>holdUntil){
-      scanMsg(p.raw.length>30?"合計が読み取れません。少し近づけて、まっすぐ写してください":"レシートを枠の中にかざしてください");
+    const looksReceipt=p.raw.length>40&&/合計|小計|領収|お買上|点数|¥\s*\d/.test(p.raw);
+    if(p.raw.length<15)lastSent="";            // 何も写っていない＝次のレシートを待つ
+    if(AI.on){
+      /* 端末内の読み取りは「レシートが写ったか」の判定だけに使い、内容はAIで読む */
+      if(looksReceipt&&!(lastSent&&textSim(p.raw,lastSent)>0.7&&Date.now()-lastSentAt<20000)){await aiCapture(p.raw);continue}
+      if(Date.now()>holdUntil)scanMsg(looksReceipt?"登録済みです。次のレシートをかざしてください":"レシートを枠の中にかざしてください");
+    }else{
+      const maxItem=Math.max(0,...p.items.map(i=>i.price));
+      const ok=p.strongTotal&&p.total>0&&p.total>=maxItem&&(p.dateFound||p.store||p.time);
+      if(ok||(forceOnce&&p.total>0)){await registerScanned(makeEntry(p));holdUntil=Date.now()+2500}
+      else if(forceOnce)scanMsg("読み取れませんでした。少し近づけて、まっすぐ写してください","err"),holdUntil=Date.now()+2500;
+      else if(Date.now()>holdUntil)scanMsg(p.raw.length>30?"合計が読み取れません。少し近づけて、まっすぐ写してください":"レシートを枠の中にかざしてください");
+      forceOnce=false;
     }
     await sleep(200);
   }
@@ -690,7 +851,7 @@ async function scanLoop(){
 const busy=document.getElementById("busy"),busyText=document.getElementById("busyText"),busyBar=document.getElementById("busyBar");
 document.getElementById("pick").onchange=async ev=>{
   const files=[...(ev.target.files||[])];ev.target.value="";if(!files.length)return;
-  if(typeof Tesseract==="undefined"){toast("読み取り機能を読み込めません。ネットにつないで開き直してください");return}
+  if(typeof Tesseract==="undefined"&&!AI.on){toast("読み取り機能を読み込めません。ネットにつないで開き直してください");return}
   busy.hidden=false;let added=0,dups=0,fails=0,last=null;
   for(let k=0;k<files.length;k++){
     const head=files.length>1?`（${k+1}/${files.length}）`:"";
@@ -699,6 +860,14 @@ document.getElementById("pick").onchange=async ev=>{
     try{
       const bmp=await createImageBitmap(files[k],{imageOrientation:"from-image"}).catch(()=>null);
       const src=bmp||await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=URL.createObjectURL(files[k])});
+      if(AI.on){
+        show("AIで読み取り中…",0.5);
+        const blob=await toJpeg(src,{x:0,y:0,w:src.width,h:src.height});if(bmp&&bmp.close)bmp.close();
+        let r;try{r=await aiReadReceipt(blob)}catch(e){if(e&&e.code==="quota")AI.pausedUntil=Date.now()+60000;if(e&&(e.code==="key"||e.code==="net")){toast(aiErrMsg(e.code));fails++;continue}r=null}
+        if(r&&r.is_receipt&&r.total>0){const e=aiEntry(r);if(findDuplicate(e)){dups++;continue}await addEntry(e);added++;last=e;continue}
+        if(r){fails++;continue}
+      }
+      if(typeof Tesseract==="undefined"){fails++;continue}
       const canvas=ocrCanvas(src,{x:0,y:0,w:src.width,h:src.height});if(bmp&&bmp.close)bmp.close();
       progressCb=m=>{if(m.status==="recognizing text")show("文字を読み取り中…",0.2+m.progress*0.8);
         else if(/loading|initializing/.test(m.status))show("読み取り機能を準備中…",0.1)};
