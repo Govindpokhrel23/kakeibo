@@ -1,5 +1,5 @@
 // オフラインでも開けるようにファイルを保存しておく
-const CACHE = "kakeibo-v6";
+const CACHE = "kakeibo-v7";
 const CORE = ["./", "./index.html", "./manifest.json", "./icon-180.png", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {
@@ -32,7 +32,7 @@ self.addEventListener("fetch", e => {
   // 自分のファイル：ネット優先、つながらなければ保存分
   if (url.origin === self.location.origin) {
     e.respondWith(
-      fetch(req).then(res => {
+      fetch(req, { cache: "no-cache" }).then(res => {
         if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
         return res;
       }).catch(() => caches.match(req).then(hit => hit || caches.match("./index.html")))

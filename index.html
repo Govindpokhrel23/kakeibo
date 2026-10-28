@@ -245,6 +245,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const yenJ=n=>Math.round(n||0).toLocaleString("ja-JP")+"円";
 const WD="日月火水木金土";
+const APP_VERSION="1.7";
 const dayLabel=s=>{const d=new Date(s+"T00:00");return `${d.getMonth()+1}月${d.getDate()}日(${WD[d.getDay()]})`};
 const md=s=>{const d=new Date(s+"T00:00");return `${d.getMonth()+1}/${d.getDate()}`};
 const monthKey=d=>d.getFullYear()+"-"+pad(d.getMonth()+1);
@@ -253,14 +254,20 @@ const SCAN_ICON=`<svg class="scanmark" viewBox="0 0 24 24" fill="none" stroke="c
 /* ================= 保存（IndexedDB・このiPhoneの中だけ） ================= */
 const DB={
   db:null,
-  open(){return new Promise((res,rej)=>{const r=indexedDB.open("kakeibo",1);
-    r.onupgradeneeded=()=>{r.result.createObjectStore("receipts",{keyPath:"id"});r.result.createObjectStore("images")};
+  open(){return new Promise((res,rej)=>{const r=indexedDB.open("kakeibo",2);
+    r.onupgradeneeded=()=>{const db=r.result,has=n=>db.objectStoreNames.contains(n);
+      if(!has("receipts"))db.createObjectStore("receipts",{keyPath:"id"});
+      if(!has("images"))db.createObjectStore("images");
+      if(!has("snapshots"))db.createObjectStore("snapshots",{keyPath:"at"})};
     r.onsuccess=()=>{this.db=r.result;res()};r.onerror=()=>rej(r.error)})},
   tx(store,mode,fn){return new Promise((res,rej)=>{const t=this.db.transaction(store,mode);const s=t.objectStore(store);const out=fn(s);t.oncomplete=()=>res(out&&out.result);t.onerror=()=>rej(t.error)})},
   all(){return this.tx("receipts","readonly",s=>s.getAll())},
   put(e){return this.tx("receipts","readwrite",s=>s.put(e))},
   del(id){return this.tx("receipts","readwrite",s=>s.delete(id))},
   clear(){return this.tx("receipts","readwrite",s=>s.clear())},
+  snaps(){return this.tx("snapshots","readonly",s=>s.getAll())},
+  putSnap(x){return this.tx("snapshots","readwrite",s=>s.put(x))},
+  delSnap(at){return this.tx("snapshots","readwrite",s=>s.delete(at))},
   clearImages(){return this.tx("images","readwrite",s=>s.clear())}
 };
 /* 旧版のデータを新しい形に */
@@ -293,13 +300,55 @@ const BK={
 };
 function backupJSON(){return JSON.stringify({app:"kakeibo",version:1,exported:new Date().toISOString(),entries},null,0)}
 async function doBackup(){
-  const ok=await shareOrDownload(`kakeibo-backup-${today()}.json`,backupJSON(),"application/json");
+  const ok=await shareOrDownload(`家計簿バックアップ-${today()}.json`,backupJSON(),"application/json");
   if(ok){BK.done();toast("バックアップしました");render()}
 }
 function backupBannerHTML(){
   if(!BK.due)return "";
   const t=BK.last?`前回のバックアップから${BK.dirty}件の変更があります。`:`まだバックアップしていません。`;
   return `<div class="bkbanner"><span>${t}「ファイル」に保存しておくと、消えても戻せます。</span><button id="bkNow">保存</button></div>`;
+}
+/* 週1回：アプリを開いた時にバックアップ画面を出す（iPhoneの仕組み上、保存ボタンだけは自分で押す必要があります） */
+function weeklyBackupCheck(){
+  if(!entries.length||!bg.hidden||!scannerEl.hidden)return;
+  const week=7*864e5,now=Date.now();
+  if(BK.last&&now-BK.last<week)return;
+  if(now-BK.get("kb_prompted")<20*3600e3)return;   // 「あとで」は翌日まで出さない
+  BK.set("kb_prompted",now);
+  const first=!BK.last;
+  openSheet(`<div class="sh"><span style="width:52px"></span><b>週1回のバックアップ</b><span style="width:52px"></span></div>
+    <div class="note" style="font-size:15px">記録 ${entries.length}件を「ファイル」アプリに保存します。<br><br>
+    ${first?`<b>はじめての時だけ</b><br>次の画面で「ファイルに保存」→「iCloud Drive」→ 右上のフォルダボタンで「<b>家計簿</b>」フォルダを作成 → その中で「保存」<br><br>2回目からは「家計簿」フォルダが選ばれた状態で開くので、<b>「ファイルに保存」→「保存」の2タップ</b>で終わります。`
+    :`「ファイルに保存」→「保存」の2タップで、「家計簿」フォルダに保存されます。`}</div>
+    <div class="btnrow" style="flex-direction:column"><button class="btn-p" id="wkGo">バックアップを保存</button><button class="btn-g" id="wkLater">あとで</button></div>`);
+  sheet.querySelector("#wkGo").onclick=()=>{closeSheet();doBackup()};
+  sheet.querySelector("#wkLater").onclick=closeSheet;
+}
+/* アプリ内の自動保存：週1回、記録のコピーを最大8週分とっておく（間違って消した時に戻せる） */
+async function autoSnapshot(){
+  try{
+    if(!entries.length)return;
+    const list=(await DB.snaps()||[]).sort((a,b)=>b.at-a.at);
+    if(list[0]&&Date.now()-list[0].at<6*864e5)return;
+    await DB.putSnap({at:Date.now(),count:entries.length,entries:JSON.parse(JSON.stringify(entries))});
+    for(const x of list.slice(7))await DB.delSnap(x.at);
+  }catch(e){}
+}
+async function openSnapshots(){
+  let list=[];try{list=(await DB.snaps()||[]).sort((a,b)=>b.at-a.at)}catch(e){}
+  openSheet(`<div class="sh"><button data-close>閉じる</button><b>アプリ内の自動保存</b><span style="width:52px"></span></div>
+    <div class="note">週に1回、アプリの中に記録のコピーを自動でとっています（最大8週分）。間違って消した時などに戻せます。<br>※アプリ自体を削除すると、これも消えます。</div>
+    ${list.length?`<div class="list" style="border-top:1px solid var(--line);border-bottom:1px solid var(--line)">${list.map(x=>{const d=new Date(x.at);
+      return `<button class="item" data-snap="${x.at}"><span class="t">${d.getMonth()+1}月${d.getDate()}日 ${pad(d.getHours())}:${pad(d.getMinutes())}</span><span class="a">${x.count}件</span><span class="chev">›</span></button>`}).join("")}</div>`
+      :`<div class="empty">まだありません。来週から自動でたまります。</div>`}`);
+  sheet.querySelectorAll("[data-snap]").forEach(b=>b.onclick=()=>{
+    const x=list.find(y=>String(y.at)===b.dataset.snap);if(!x)return;
+    const have=new Set(entries.map(e=>e.id)),miss=x.entries.filter(e=>!have.has(e.id)).map(migrate);
+    openSheet(`<div class="sh"><button data-close>閉じる</button><b>自動保存から戻す</b><span style="width:52px"></span></div>
+      <div class="note">この時点の記録 ${x.count}件のうち、今のアプリにない記録が${miss.length}件あります。</div>
+      <div class="btnrow"><button class="btn-g" data-close>やめる</button><button class="btn-p" id="snapGo"${miss.length?"":" disabled"}>${miss.length}件を戻す</button></div>`);
+    sheet.querySelector("#snapGo").onclick=async()=>{for(const e of miss){await DB.put(e);entries.push(e)}closeSheet();toast(`${miss.length}件 戻しました`);render()};
+  });
 }
 function bindBanner(){const b=view.querySelector("#bkNow");if(b)b.onclick=doBackup}
 
@@ -475,7 +524,8 @@ function renderSettings(){
     <div class="setgroup">
       <button class="row" id="sCsv"><span>CSVエクスポート</span><span class="chev">›</span></button>
       <button class="row" id="sBk"><span>バックアップを「ファイル」に保存</span><span class="val">${BK.last?md(ymd(new Date(BK.last))):"未保存"}<span class="chev">›</span></span></button>
-      <button class="row" id="sRs"><span>バックアップから戻す</span><span class="chev">›</span></button>
+      <button class="row" id="sSnap"><span>アプリ内の自動保存から戻す</span><span class="chev">›</span></button>
+      <button class="row" id="sRs"><span>バックアップファイルから戻す</span><span class="chev">›</span></button>
     </div>
     <div class="setlabel">スキャン</div>
     <div class="setgroup">
@@ -488,8 +538,9 @@ function renderSettings(){
       <button class="row" id="sAbout"><span>データとプライバシー</span><span class="chev">›</span></button>
       <button class="row danger" id="sDel"><span>すべてのデータを削除</span><span class="chev">›</span></button>
     </div>
-    <div class="note">記録 ${entries.length}件 ・ 広告なし</div>`;
+    <div class="note">記録 ${entries.length}件 ・ 広告なし ・ バージョン ${APP_VERSION}</div>`;
   view.querySelector("#sCsv").onclick=exportCSV;
+  view.querySelector("#sSnap").onclick=openSnapshots;
   view.querySelector("#sAI").onclick=openAISettings;
   view.querySelector("#sBk").onclick=()=>infoSheet("バックアップ",`
     記録はこのアプリの中に保存されています。アプリを更新しても消えません。<br><br>
@@ -736,7 +787,7 @@ function findItems(lines,start){
   return out;
 }
 const CAT_RULES=[
-  ["外食費",["ラーメン","食堂","カフェ","珈琲","コーヒー","喫茶","レストラン","マクドナルド","モスバーガー","すき家","吉野家","松屋","スターバックス","コメダ","ココイチ","焼肉","寿司","鮨","居酒屋","うどん","そば","ガスト","サイゼリヤ","丸亀","スシロー","くら寿司","はま寿司","まぜそば"]],
+  ["外食費",["ラーメン","食堂","カフェ","珈琲","コーヒー","喫茶","レストラン","マクドナルド","モスバーガー","すき家","吉野家","松屋","スターバックス","コメダ","ココイチ","焼肉","寿司","鮨","居酒屋","うどん","そば","ガスト","サイゼリヤ","丸亀","スシロー","くら寿司","はま寿司","まぜそば","牛角","食べ放題","定食","王将","ケンタッキー","KFC","ミスタードーナツ","びっくりドンキー","大戸屋","天丼","てんや","かつや","CoCo壱","ココス","バーミヤン","ジョイフル","ステーキ","ハンバーグ","ピザ","テーブル番号","伝票番号","ご利用明細"]],
   ["車",["ENEOS","エネオス","出光","apollostation","コスモ石油","ガソリン","石油","オートバックス","イエローハット","ジェームス","カー用品","洗車","車検"]],
   ["交通費",["駐車","パーキング","名鉄","JR","タクシー","高速","NEXCO","バス"]],
   ["医療費",["病院","クリニック","医院","歯科","調剤"]],
@@ -1053,7 +1104,15 @@ document.getElementById("pick").onchange=async ev=>{
   }catch(e){toast("データを保存できません。プライベートブラウズをオフにしてください")}
   render();
   if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
-  if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+  if("serviceWorker" in navigator){
+    const hadController=!!navigator.serviceWorker.controller;let reloaded=false;
+    navigator.serviceWorker.addEventListener("controllerchange",()=>{if(hadController&&!reloaded){reloaded=true;location.reload()}});
+    navigator.serviceWorker.register("sw.js").then(r=>r.update()).catch(()=>{});
+  }
+  autoSnapshot();
+  setTimeout(weeklyBackupCheck,1500);
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden){setTimeout(weeklyBackupCheck,800);
+    navigator.serviceWorker?.getRegistration().then(r=>r&&r.update()).catch(()=>{})}});
   const standalone=navigator.standalone||matchMedia("(display-mode: standalone)").matches;
   if(!standalone&&/iPhone|iPad/.test(navigator.userAgent))setTimeout(()=>toast("Safariの共有ボタン →「ホーム画面に追加」でアプリになります"),800);
 })();
