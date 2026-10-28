@@ -1,11 +1,11 @@
 {
-  "name": "レシート家計簿",
+  "name": "家計簿",
   "short_name": "家計簿",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#EEF2F1",
-  "theme_color": "#0B7A63",
+  "background_color": "#F1F0F0",
+  "theme_color": "#A487B4",
   "lang": "ja",
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
