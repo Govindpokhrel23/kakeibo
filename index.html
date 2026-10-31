@@ -193,6 +193,135 @@ details pre{white-space:pre-wrap;font-size:11px;background:#fff;padding:8px;bord
 .busy div{background:#fff;border-radius:16px;padding:22px 26px;font-size:15px;min-width:220px;text-align:center}
 .busy .bar{height:6px;background:var(--purple-soft);border-radius:3px;margin-top:12px;overflow:hidden}
 .busy .bar i{display:block;height:100%;background:var(--purple);width:0;transition:width .2s}
+
+/* アヒルとウサギ */
+.mascot{position:relative;margin:14px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 4px 14px rgba(120,90,140,.16)}
+.mstage{position:relative}
+.mascot svg{display:block;width:100%;height:auto;cursor:pointer}
+.mascot .bub{position:absolute;left:50%;top:10px;transform:translateX(-50%);width:max-content;max-width:86%;background:rgba(255,255,255,.96);border-radius:14px;padding:7px 13px;font-size:14px;line-height:1.4;color:#4A3F52;box-shadow:0 2px 8px rgba(0,0,0,.08);text-align:center;pointer-events:none;animation:mPop .35s cubic-bezier(.3,1.5,.6,1)}
+.mascot .bub::after{content:"";position:absolute;left:50%;bottom:-6px;margin-left:-6px;border:6px solid transparent;border-bottom:0;border-top-color:rgba(255,255,255,.96)}
+.mchip{display:flex;align-items:center;justify-content:space-between;width:100%;border:none;background:#fff;color:var(--purple-d);font-size:13px;font-weight:600;padding:10px 14px 0;text-align:left}
+.mbar{display:flex;align-items:center;justify-content:space-between;gap:6px 10px;flex-wrap:wrap;width:100%;border:none;background:#fff;padding:10px 14px 12px;font-size:13px;color:#6B5F73;text-align:left}
+.mbar i{display:block;flex-basis:100%;height:6px;border-radius:3px;background:#EEE9F1;overflow:hidden}
+.mbar i b{display:block;height:100%;border-radius:3px}
+.mascot .ch,.mascot .ear,.mascot .sway,.mascot .bounce,.mascot .shd,.mascot .kite,.mascot .hang,.mascot .frog,.mascot .flame{transform-box:fill-box;transform-origin:50% 100%}
+.mascot .shd{transform-origin:50% 50%}
+.mascot .arm{transform-box:fill-box;transform-origin:50% 8%}
+.mascot .blink,.mascot .coin,.mascot .ripple,.mascot .spin,.mascot .flap,.mascot .glow,.mascot .flash2,.mascot .sizzle{transform-box:fill-box;transform-origin:50% 50%}
+.mascot .tail{transform-box:fill-box;transform-origin:0% 80%;animation:mWag 1.8s ease-in-out infinite}
+.mascot .blink{animation:mBlink 4.6s infinite}
+.mascot .rab .blink{animation-delay:-1.7s}
+.mascot .k-idle{animation:mIdle 2.8s ease-in-out infinite}
+.mascot .rab.k-idle{animation-delay:-1.1s}
+.mascot .k-idle .earR,.mascot .k-happy .earR,.mascot .k-groove .earR{animation:mTwitch 5.5s ease-in-out infinite}
+.mascot .k-happy{animation:mHop 1.15s cubic-bezier(.45,0,.55,1) infinite}
+.mascot .rab.k-happy{animation-delay:-.3s}
+.mascot .k-hopfast{animation:mJump .7s cubic-bezier(.45,0,.55,1) infinite}
+.mascot .k-groove{animation:mGroove 1.1s ease-in-out infinite}
+.mascot .rab.k-groove{animation-delay:-.55s}
+.mascot .k-exercise{animation:mJump .9s ease-in-out infinite}
+.mascot .k-exercise .armL{animation:mArmL .9s ease-in-out infinite}
+.mascot .k-exercise .armR{animation:mArmR .9s ease-in-out infinite}
+.mascot .k-clap{animation:mHop 1.4s ease-in-out infinite}
+.mascot .k-clap .armL{animation:mClapL .3s ease-in-out infinite alternate}
+.mascot .k-clap .armR{animation:mClapR .3s ease-in-out infinite alternate}
+.mascot .k-sad{animation:mSigh 3.2s ease-in-out infinite}
+.mascot .k-sad .earL{transform:rotate(-58deg)}
+.mascot .k-sad .earR{transform:rotate(58deg)}
+.mascot .k-sleep{animation:mBreathe 3.4s ease-in-out infinite}
+.mascot .k-sleep .earL{transform:rotate(-30deg)}
+.mascot .k-sleep .earR{transform:rotate(30deg)}
+.mascot .shd-happy{animation:mShd 1.15s cubic-bezier(.45,0,.55,1) infinite}
+.mascot .shd-happy.rabs{animation-delay:-.3s}
+.mascot .shd-hopfast{animation:mShd2 .7s cubic-bezier(.45,0,.55,1) infinite}
+.mascot .shd-exercise{animation:mShd2 .9s ease-in-out infinite}
+.mascot .shd-clap{animation:mShd 1.4s ease-in-out infinite}
+.jump .ch{animation:mTap .55s ease-out!important}
+.mascot .sway{animation:mSway 3s ease-in-out infinite}
+.mascot .kite{transform-origin:50% 20%;animation:mKite 2.6s ease-in-out infinite}
+.mascot .hang{transform-origin:50% 0%;animation:mSway 2.4s ease-in-out infinite}
+.mascot .bounce{animation:mBall 1.2s cubic-bezier(.5,0,.5,1) infinite}
+.mascot .steam,.mascot .smoke{animation:mSmoke 3s ease-out infinite}
+.mascot .fall{animation:mFall 7s linear infinite}
+.mascot .rainf{animation-name:mRain}
+.mascot .blow{animation-name:mBlow}
+.mascot .tw{animation:mTw 2.6s ease-in-out infinite}
+.mascot .up,.mascot .note{animation:mRise 2.8s ease-out infinite;font-weight:700}
+.mascot .bat{animation:mBat 5s ease-in-out infinite}
+.mascot .drift{animation:mDrift 40s linear infinite}
+.mascot .spin{animation:mSpin 16s linear infinite}
+.mascot .flash,.mascot .bolt{opacity:0;animation:mFlash 6s linear infinite}
+.mascot .flash2{opacity:0;animation:mFlash2 3.2s linear infinite}
+.mascot .ripple{animation:mRipple 1.8s ease-out infinite}
+.mascot .bob{animation:mBob 1.6s ease-in-out infinite}
+.mascot .fishjump{opacity:0;animation:mFish 5s ease-in-out infinite}
+.mascot .flip{transform-box:fill-box;transform-origin:0% 50%;animation:mFlip 4s ease-in-out infinite}
+.mascot .drip{animation:mDrip 1s linear infinite}
+.mascot .bbl{animation:mBubble 3.8s ease-out infinite}
+.mascot .coin{animation:mCoin 2.6s ease-in infinite}
+.mascot .pass{animation:mPass 2.2s ease-in-out infinite}
+.mascot .flame{animation:mFlame .5s ease-in-out infinite alternate}
+.mascot .glow{animation:mTw 1.6s ease-in-out infinite}
+.mascot .flap{animation:mFlap .25s ease-in-out infinite alternate}
+.mascot .flutter{animation:mFlutter 9s ease-in-out infinite}
+.mascot .splash{animation:mSplash 1.15s ease-out infinite}
+.mascot .frog{animation:mFrog 2.4s ease-in-out infinite}
+.mascot .crawl{animation:mCrawl 26s linear infinite alternate}
+.mascot .pop{animation:mPopLeaf 2.2s ease-out infinite}
+.mascot .rise{animation:mRiseB 9s ease-in infinite}
+.mascot .sizzle{animation:mBreathe .6s ease-in-out infinite}
+.mascot .rope{transform-box:fill-box;transform-origin:50% 0%;animation:mRope .7s linear infinite}
+.mascot .shoot{opacity:0;animation:mShoot 7s ease-in infinite}
+@keyframes mPop{from{transform:translateX(-50%) scale(.8);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
+@keyframes mIdle{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(-2px) scale(.99,1.015)}}
+@keyframes mHop{0%,100%{transform:translateY(0) scale(1,1)}12%{transform:translateY(0) scale(1.07,.93)}42%{transform:translateY(-13px) scale(.96,1.04)}72%{transform:translateY(0) scale(1.05,.95)}86%{transform:translateY(0) scale(.99,1.01)}}
+@keyframes mShd{0%,12%,72%,100%{transform:scale(1);opacity:.1}42%{transform:scale(.75);opacity:.05}}
+@keyframes mShd2{0%,100%{transform:scale(1)}50%{transform:scale(.72)}}
+@keyframes mJump{0%,100%{transform:translateY(0) scale(1.03,.97)}50%{transform:translateY(-15px) scale(.98,1.02)}}
+@keyframes mGroove{0%,100%{transform:rotate(-4deg) translateY(0)}50%{transform:rotate(4deg) translateY(-3px)}}
+@keyframes mTwitch{0%,88%,100%{transform:rotate(0)}91%{transform:rotate(14deg)}94%{transform:rotate(0)}97%{transform:rotate(8deg)}}
+@keyframes mWag{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(10deg)}}
+@keyframes mBlink{0%,93%,100%{transform:scaleY(1)}95.5%{transform:scaleY(.1)}}
+@keyframes mArmL{0%,100%{transform:rotate(0)}50%{transform:rotate(150deg)}}
+@keyframes mArmR{0%,100%{transform:rotate(0)}50%{transform:rotate(-150deg)}}
+@keyframes mClapL{from{transform:rotate(10deg)}to{transform:rotate(-55deg)}}
+@keyframes mClapR{from{transform:rotate(-10deg)}to{transform:rotate(55deg)}}
+@keyframes mSigh{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(3px) rotate(-3deg)}}
+@keyframes mBreathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.03,1.04)}}
+@keyframes mTap{0%{transform:translateY(0) scale(1.1,.88)}40%{transform:translateY(-26px) scale(.94,1.07)}75%{transform:translateY(0) scale(1.06,.94)}100%{transform:translateY(0) scale(1,1)}}
+@keyframes mSway{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+@keyframes mKite{0%,100%{transform:rotate(-8deg) translate(0,0)}50%{transform:rotate(8deg) translate(6px,-4px)}}
+@keyframes mBall{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
+@keyframes mSmoke{0%{transform:translate(0,0) scale(.6);opacity:0}20%{opacity:.75}100%{transform:translate(6px,-34px) scale(1.4);opacity:0}}
+@keyframes mFall{from{transform:translate(0,-20px) rotate(0)}to{transform:translate(24px,242px) rotate(260deg)}}
+@keyframes mRain{from{transform:translate(0,-20px)}to{transform:translate(-14px,242px)}}
+@keyframes mBlow{from{transform:translate(-60px,-10px) rotate(0)}to{transform:translate(380px,210px) rotate(400deg)}}
+@keyframes mTw{0%,100%{opacity:.3}50%{opacity:1}}
+@keyframes mRise{0%{opacity:0;transform:translate(0,0)}20%{opacity:1}100%{opacity:0;transform:translate(10px,-40px)}}
+@keyframes mBat{0%,100%{transform:translate(0,0)}50%{transform:translate(22px,-8px)}}
+@keyframes mDrift{from{transform:translateX(-80px)}to{transform:translateX(440px)}}
+@keyframes mSpin{to{transform:rotate(360deg)}}
+@keyframes mFlash{0%,88%,92%,96%,100%{opacity:0}89%,94%{opacity:.8}}
+@keyframes mFlash2{0%,80%,88%,100%{opacity:0}82%{opacity:.95}}
+@keyframes mRipple{from{transform:scale(.3);opacity:1}to{transform:scale(2.4);opacity:0}}
+@keyframes mBob{0%,100%{transform:translateY(0)}50%{transform:translateY(2px)}}
+@keyframes mFish{0%,55%,100%{opacity:0;transform:translate(-14px,4px) rotate(30deg)}62%{opacity:1}70%{transform:translate(0,-22px) rotate(0)}78%{opacity:1}84%{opacity:0;transform:translate(14px,4px) rotate(-30deg)}}
+@keyframes mFlip{0%,60%,100%{transform:scaleX(1)}75%,90%{transform:scaleX(-1)}}
+@keyframes mDrip{from{transform:translateY(0);opacity:1}to{transform:translateY(30px);opacity:0}}
+@keyframes mBubble{0%{transform:translate(0,0) scale(.3);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx,20px),-120px) scale(1);opacity:0}}
+@keyframes mCoin{0%{transform:translateY(-60px) scale(1);opacity:0}15%{opacity:1}70%{transform:translateY(0) scale(1);opacity:1}85%,100%{transform:translateY(4px) scale(.4);opacity:0}}
+@keyframes mPass{0%,100%{transform:translate(-40px,0)}25%{transform:translate(0,-44px)}50%{transform:translate(40px,0)}75%{transform:translate(0,-44px)}}
+@keyframes mFlame{from{transform:scale(1,1)}to{transform:scale(.88,1.12)}}
+@keyframes mFlap{from{transform:scaleX(1)}to{transform:scaleX(.3)}}
+@keyframes mFlutter{0%,100%{transform:translate(0,0)}25%{transform:translate(40px,-14px)}50%{transform:translate(20px,18px)}75%{transform:translate(-24px,6px)}}
+@keyframes mSplash{0%,10%{transform:translate(0,0);opacity:0}15%{opacity:1}60%{transform:translate(var(--dx,10px),-16px)}100%{transform:translate(calc(var(--dx,10px) * 1.4),0);opacity:0}}
+@keyframes mFrog{0%,60%,100%{transform:translateY(0) scale(1,1)}70%{transform:translateY(0) scale(1.1,.9)}80%{transform:translateY(-14px) scale(.95,1.05)}90%{transform:translateY(0)}}
+@keyframes mCrawl{from{transform:translateX(-12px)}to{transform:translateX(12px)}}
+@keyframes mPopLeaf{0%{transform:translate(0,0) rotate(0);opacity:0}15%{opacity:1}50%{transform:translate(var(--dx,10px),-30px) rotate(180deg)}100%{transform:translate(calc(var(--dx,10px) * 1.6),4px) rotate(360deg);opacity:0}}
+@keyframes mRiseB{0%{transform:translate(0,0);opacity:1}80%{opacity:1}100%{transform:translate(20px,-190px);opacity:0}}
+@keyframes mRope{0%{transform:scaleY(1)}25%{transform:scaleY(0)}50%{transform:scaleY(-2.6)}75%{transform:scaleY(0)}100%{transform:scaleY(1)}}
+@keyframes mShoot{0%,70%{opacity:0;transform:translate(90px,20px)}74%{opacity:1}88%{opacity:0;transform:translate(220px,66px)}100%{opacity:0;transform:translate(220px,66px)}}
+@media (prefers-reduced-motion:reduce){.mascot *{animation:none!important}}
 </style>
 </head>
 <body>
@@ -245,7 +374,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const yenJ=n=>Math.round(n||0).toLocaleString("ja-JP")+"円";
 const WD="日月火水木金土";
-const APP_VERSION="1.7";
+const APP_VERSION="1.9";
 const dayLabel=s=>{const d=new Date(s+"T00:00");return `${d.getMonth()+1}月${d.getDate()}日(${WD[d.getDay()]})`};
 const md=s=>{const d=new Date(s+"T00:00");return `${d.getMonth()+1}/${d.getDate()}`};
 const monthKey=d=>d.getFullYear()+"-"+pad(d.getMonth()+1);
@@ -366,6 +495,469 @@ function segHTML(opts,cur,attr,wide){return `<div class="seg${wide?" wide":""}">
 function monthNavHTML(){return `<div class="monthnav"><button data-mv="-1" aria-label="前の月">◁</button><span class="title">${S.month.getFullYear()}年${S.month.getMonth()+1}月</span><button data-mv="1" aria-label="次の月">▷</button>`}
 function bindMonthNav(root){root.querySelectorAll("[data-mv]").forEach(b=>b.onclick=()=>{S.month=new Date(S.month.getFullYear(),S.month.getMonth()+(+b.dataset.mv),1);S.selDay=null;render()})}
 
+/* ================= アヒルとウサギ（入力画面のキャラ） =================
+   毎日の「今日のシーン」を、AI（Gemini・1日1回）か内蔵の25シーンから決める。アプリを更新しなくても毎日変わる。
+   さらに 天気・時間帯・季節/行事・今月のお金のペース・レシート登録 で動きとセリフが変わる */
+const MS={
+  get budget(){try{return +localStorage.getItem("kb_budget")||0}catch(e){return 0}},
+  set budget(v){try{v?localStorage.setItem("kb_budget",String(v)):localStorage.removeItem("kb_budget")}catch(e){}},
+  idx:0,st:null,jt:0
+};
+const dayNum=d=>Math.round(new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime()/864e5);
+function mRand(seed){let s=(seed*7919+13)%2147483647;if(s<=0)s+=2147483646;return()=>(s=s*16807%2147483647)/2147483647}
+const M_COL=["#F28DB2","#7FB8E8","#9AD08C","#F5B85A","#B79AE0"];
+
+/* ---------- 今の天気（Open-Meteo・無料、キー不要）。30分ごと。場所は刈谷市、設定で現在地にも ---------- */
+const WX={
+  get(){try{return JSON.parse(localStorage.getItem("kb_wx")||"null")}catch(e){return null}},
+  save(x){try{localStorage.setItem("kb_wx",JSON.stringify(x))}catch(e){}},
+  get gps(){try{return localStorage.getItem("kb_wxgps")==="1"}catch(e){return false}},
+  set gps(v){try{v?localStorage.setItem("kb_wxgps","1"):localStorage.removeItem("kb_wxgps");localStorage.removeItem("kb_wx")}catch(e){}},
+  busy:false,
+  async load(force){
+    const c=this.get();if(!force&&c&&Date.now()-c.at<30*60e3)return;if(this.busy)return;this.busy=true;
+    try{
+      let lat="34.99",lon="137.00";
+      if(this.gps&&navigator.geolocation){const p=await new Promise(res=>navigator.geolocation.getCurrentPosition(x=>res(x.coords),()=>res(null),{maximumAge:3*3600e3,timeout:8000}));
+        if(p){lat=p.latitude.toFixed(2);lon=p.longitude.toFixed(2)}}
+      const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,wind_speed_10m&timezone=auto`);
+      const cu=(await r.json()).current;if(!cu)return;
+      this.save({at:Date.now(),code:cu.weather_code,t:cu.temperature_2m,wind:cu.wind_speed_10m});refreshMascot();
+    }catch(e){}finally{this.busy=false}
+  },
+  now(){const c=this.get();if(!c||Date.now()-c.at>3*3600e3)return null;const k=c.code;
+    const sky=k>=95?"thunder":(k>=71&&k<=77)||k===85||k===86?"snow":(k>=51&&k<=67)||(k>=80&&k<=82)?"rain":k===45||k===48?"fog":k===3?"cloudy":k===2||k===1?"partly":"clear";
+    return {sky,t:c.t,hot:c.t>=30,cold:c.t<=5,windy:c.wind>=30}}
+};
+
+/* ---------- 今の状況 ---------- */
+function mCtx(){
+  const now=new Date(),h=now.getHours(),mo=now.getMonth()+1,d=now.getDate(),seed=dayNum(now),mmdd=mo*100+d;
+  const time=h>=5&&h<10?"morning":h>=10&&h<16?"day":h>=16&&h<19?"evening":h>=19&&h<22?"yoru":"night";
+  const ev=mmdd>=1024&&mmdd<=1031?"halloween":mmdd>=1218&&mmdd<=1225?"xmas":mmdd>=101&&mmdd<=107?"newyear":
+    mmdd===214?"valentine":mmdd===707?"tanabata":mmdd>=325&&mmdd<=415?"sakura":null;
+  const season=(mo===12||mo<=2)?"winter":mo<=5?"spring":mo<=8?"summer":"autumn";
+  const wx=WX.now(),wet=!!wx&&(wx.sky==="rain"||wx.sky==="thunder"),snowy=!!wx&&wx.sky==="snow";
+  const dim=new Date(now.getFullYear(),mo,0).getDate();
+  const spent=entries.filter(e=>e.type!=="income"&&e.date.startsWith(monthKey(now))).reduce((a,e)=>a+e.amount,0);
+  const B=MS.budget;let money=null,mmsg="";
+  if(B){const pace=B*d/dim;
+    if(spent>B){money="over";mmsg=`予算を${yenJ(spent-B)}オーバー…あと${dim-d}日、いっしょに節約しよ`}
+    else if(spent>pace*1.1){money="warn";mmsg=`ちょっと使いすぎペースかも。残り${yenJ(B-spent)}だよ`}
+    else{money="good";mmsg=`いい感じ！今月はあと${yenJ(B-spent)}使えるよ`}
+  }else{
+    const pk=monthKey(new Date(now.getFullYear(),now.getMonth()-1,1));
+    const prev=entries.filter(e=>e.type!=="income"&&e.date.startsWith(pk)&&+e.date.slice(8,10)<=d).reduce((a,e)=>a+e.amount,0);
+    if(prev>0&&spent>0){
+      if(spent>prev*1.1){money="warn";mmsg=`先月の同じ日より${yenJ(spent-prev)}多いペースだよ`}
+      else{money="good";mmsg=spent<prev?`先月より${yenJ(prev-spent)}少ないペース！えらい`:"先月と同じくらいのペースだよ"}
+    }
+  }
+  const t0=new Date(now.getFullYear(),now.getMonth(),d).getTime();
+  const todays=entries.filter(e=>e.type!=="income"&&(e.created||0)>=t0);
+  const lastAdd=todays.reduce((a,e)=>Math.max(a,e.created||0),0);
+  return {now,h,mo,d,seed,time,ev,season,wx,wet,snowy,dim,spent,B,money,mmsg,nToday:todays.length,justAdded:lastAdd&&Date.now()-lastAdd<90*60e3};
+}
+
+/* ---------- 小さな部品 ---------- */
+const gg=(x,y,s,cls="",sty="")=>`<g transform="translate(${x} ${y})"><g${cls?` class="${cls}"`:""}${sty?` style="${sty}"`:""}>${s}</g></g>`;
+const mFlower=(c,sz=1)=>`<path d="M0 0 V${-14*sz}" stroke="#6BAF6B" stroke-width="${2*sz}"/><g transform="translate(0 ${-16*sz}) scale(${sz})">${[0,72,144,216,288].map(a=>`<ellipse rx="3.4" ry="5.2" cy="-4.6" fill="${c}" transform="rotate(${a})"/>`).join("")}<circle r="3" fill="#FFD95A"/></g>`;
+const mBalloon=(c,len)=>`<path d="M0 0 Q-5 ${-len*.5} 2 ${-len}" stroke="#B9AFC0" stroke-width="1.2" fill="none"/><ellipse cx="2" cy="${-len-15}" rx="12" ry="15" fill="${c}"/><path d="M-1 ${-len+1} l3 -3 3 3z" fill="${c}"/><ellipse cx="-2" cy="${-len-20}" rx="3" ry="5" fill="#fff" opacity=".45"/>`;
+
+/* ---------- 内蔵シーン（25種類）。L=位置情報、o=そのキャラの外向き(-1/1) ---------- */
+const TH=[
+ {id:"picnic",name:"ピクニック",day:1,zone:"r",
+  back:L=>`<g transform="translate(${L.mid} ${L.G+3})"><ellipse rx="92" ry="12" fill="url(#chk)"/><ellipse rx="92" ry="12" fill="none" stroke="#E9A0A0" stroke-width="1.5"/></g>`+
+   gg(L.rOut,L.G,`<path d="M-20 -22 h40 l-4 22 h-32z" fill="#C98B4E"/><path d="M-20 -15 h40M-18 -8 h36" stroke="#A86F3A" stroke-width="2"/><path d="M-15 -22 q15 -24 30 0" stroke="#A86F3A" stroke-width="3" fill="none"/><circle cx="-8" cy="-25" r="6" fill="#E5574D"/><circle cx="5" cy="-26" r="6" fill="#9AD08C"/><path d="M-8 -31 l1 -4" stroke="#6B8E3A" stroke-width="2"/>`),
+  rHold:o=>`<g transform="translate(${-o*22} -22)"><path d="M-9 6 L0 -9 L9 6Z" fill="#F9E7BC" stroke="#E2C27E" stroke-width="1.5" stroke-linejoin="round"/><path d="M-6.5 2.5 h13" stroke="#7CC27C" stroke-width="2.5" stroke-linecap="round"/></g>`,
+  dHold:o=>`<g transform="translate(${-o*27} -18)"><circle r="6.5" fill="#E5574D"/><circle cx="-2" cy="-2" r="2" fill="#fff" opacity=".5"/><path d="M0 -6 l2 -5" stroke="#6B8E3A" stroke-width="2" stroke-linecap="round"/></g>`,
+  lines:["ピクニック日和だね！","サンドイッチ半分こしよ","お弁当持参で節約上手🍙"]},
+ {id:"fishing",name:"釣り",zone:"d",dry:1,
+  back:L=>gg(L.dOut,L.G+3,`<ellipse rx="54" ry="12" fill="url(#gPond)"/><ellipse cx="${-L.dO*30}" cy="-1" rx="9" ry="3" fill="#7CC27C"/>`)+
+   gg(L.dx+L.dO*82,L.G+2,`<ellipse rx="7" ry="1.8" fill="none" stroke="#fff" stroke-width="1"/>`,"ripple")+
+   gg(L.dOut+L.dO*28,L.G,`<path d="M-8 0 q8 -7 16 0 q-8 7 -16 0z M8 0 l6 -5 v10z" fill="#F5A25D"/><circle cx="-4" cy="-1" r="1" fill="#333"/>`,"fishjump"),
+  front:L=>{const hx=L.dx+L.dO*26,tx=L.dx+L.dO*72,bx=L.dx+L.dO*82;
+   return `<path d="M${hx} ${L.G-22} L${tx} ${L.G-88}" stroke="#8B5E3C" stroke-width="3" stroke-linecap="round"/><path d="M${tx} ${L.G-88} Q${bx} ${L.G-50} ${bx} ${L.G-2}" stroke="#8a8a8a" stroke-width="1" fill="none"/>`+
+    gg(bx,L.G-2,`<circle r="4" fill="#fff" stroke="#999" stroke-width=".8"/><path d="M-4 0 a4 4 0 0 1 8 0z" fill="#E5574D"/>`,"bob")},
+  lines:["今日は釣りの日🎣","大物かかるかな？","待つのも節約も、気長にね"]},
+ {id:"kite",name:"凧あげ",day:1,zone:"r",
+  front:L=>{const kx=L.rOut,ky=58;return `<path d="M${L.rx+L.rO*22} ${L.G-24} Q${(L.rx+kx)/2} ${L.G-40} ${kx} ${ky+22}" stroke="#8C7A94" stroke-width="1" fill="none"/>`+
+   gg(kx,ky,`<path d="M0 -24 L15 0 L0 22 L-15 0Z" fill="${L.col}"/><path d="M0 -24 V22M-15 0 H15" stroke="#fff" stroke-width="1.4" opacity=".7"/><path d="M0 22 q-7 10 0 18 q7 8 0 16" stroke="#8C7A94" fill="none" stroke-width="1.2"/><path d="M-4 30 l4 3 4 -3 -4 -3z M-4 46 l4 3 4 -3 -4 -3z" fill="#FFD95A"/>`,"kite")},
+  lines:["風にのって凧あげ！","高く上がれ〜","お金も風に飛ばさないようにね"]},
+ {id:"reading",name:"読書",any:1,zone:"r",glasses:1,
+  back:L=>gg(L.rOut,L.G,`<rect x="-18" y="-9" width="36" height="9" rx="2" fill="#7FB8E8"/><rect x="-15" y="-18" width="30" height="9" rx="2" fill="#F28DB2"/><rect x="-17" y="-27" width="33" height="9" rx="2" fill="#9AD08C"/><rect x="-12" y="-36" width="26" height="9" rx="2" fill="#F5B85A"/>`),
+  rHold:()=>`<g transform="translate(0 -26)"><path d="M0 2 q-9 -5 -17 -2 v14 q8 -3 17 2z" fill="#fff" stroke="#C9BFD8" stroke-width="1.2"/><path d="M0 2 q9 -5 17 -2 v14 q-8 -3 -17 2z" fill="#fff" stroke="#C9BFD8" stroke-width="1.2"/><path class="flip" d="M0 2 q9 -5 17 -2 v14 q-8 -3 -17 2z" fill="#F7F2FA" stroke="#C9BFD8" stroke-width="1"/><path d="M-13 4 h9M-13 7 h9M4 4 h9M4 7 h9" stroke="#D5CCE0" stroke-width="1"/></g>`,
+  lines:["今日は読書の日📚","この本おもしろい！","図書館なら無料で読めるよ"]},
+ {id:"bbq",name:"バーベキュー",dry:1,zone:"d",
+  back:L=>gg(L.dOut,L.G,`<path d="M-9 0 l6 -24 M9 0 l-6 -24" stroke="#555" stroke-width="3" stroke-linecap="round"/><path d="M-25 -27 a25 13 0 0 0 50 0z" fill="#3E3B45"/><path d="M-25 -27 h50" stroke="#999" stroke-width="2"/><rect x="-17" y="-32" width="14" height="5" rx="2.5" fill="#C0644A"/><rect x="2" y="-32" width="14" height="5" rx="2.5" fill="#C0644A"/>`+
+   [0,1,2].map(i=>`<circle class="smoke" cx="${i*6-6}" cy="-38" r="6" fill="#fff" opacity=".7" style="animation-delay:-${i*1.1}s"/>`).join("")),
+  dHold:o=>`<g transform="translate(${o*27} -18) rotate(${o*35})"><rect x="-1.5" y="-20" width="3" height="20" rx="1.5" fill="#8C7A94"/><rect x="-6" y="-29" width="12" height="10" rx="2" fill="#C9C3CF"/></g>`,
+  lines:["バーベキューだ〜🍖","いいにおいがしてきた","みんなで割り勘ならお得だね"]},
+ {id:"music",name:"音楽会",any:1,zone:"d",dPose:"groove",rPose:"groove",
+  back:L=>gg(L.dOut,L.G,`<ellipse cx="0" cy="-24" rx="16" ry="5" fill="#F2E6D9"/><path d="M-16 -24 v18 a16 5 0 0 0 32 0 v-18" fill="${L.col}"/><path d="M-16 -16 l8 8 l8 -8 l8 8 l8 -8" stroke="#fff" stroke-width="1.5" fill="none"/>`),
+  dHold:o=>`<g transform="translate(${o*2} -22) rotate(${o*28})"><rect x="-2" y="-34" width="4" height="28" rx="1.5" fill="#8B5E3C"/><ellipse cy="2" rx="11" ry="9" fill="#E59A4F"/><ellipse cy="-6" rx="8" ry="7" fill="#E59A4F"/><circle cy="-2" r="3" fill="#6B4226"/></g>`,
+  front:L=>["♪","♫","♪","♫"].map((n,i)=>`<text class="note" x="${L.mid-30+i*20}" y="${L.G-110}" font-size="16" fill="${M_COL[i]}" style="animation-delay:-${i*.8}s">${n}</text>`).join(""),
+  lines:["今日は音楽会🎵","いっしょに歌おう！","鼻歌はタダで楽しいね"]},
+ {id:"painting",name:"お絵かき",day:1,dry:1,zone:"r",
+  back:L=>gg(L.rOut,L.G,`<path d="M-14 0 L-4 -60 M14 0 L4 -60 M0 -58 V0" stroke="#A8794C" stroke-width="3" stroke-linecap="round"/><rect x="-21" y="-64" width="42" height="34" rx="2" fill="#fff" stroke="#E0D5C6" stroke-width="2"/><circle cx="9" cy="-54" r="5" fill="#FFD66B"/><path d="M-19 -32 q10 -14 20 -6 q8 -8 17 2 v4 h-37z" fill="#9AD08C"/><rect x="-25" y="-31" width="50" height="4" rx="2" fill="#A8794C"/>`),
+  rHold:o=>`<g transform="translate(${o*22} -22) rotate(${o*40})"><rect x="-1.2" y="-18" width="2.4" height="18" rx="1" fill="#A8794C"/><ellipse cy="-20" rx="2.6" ry="4" fill="#7FB8E8"/></g>`,
+  lines:["お絵かきタイム🎨","空の色、きれいに描けた？","趣味はお金をかけずに楽しもう"]},
+ {id:"garden",name:"水やり",dry:1,zone:"d",
+  back:L=>{const bx=L.dx+L.dO*60;return gg(bx,L.G,`<ellipse cy="-1" rx="30" ry="6" fill="#9C7650"/>`+[-18,-6,6,18].map((x,i)=>gg(x,-2,mFlower(M_COL[i],.9),"sway",`animation-delay:-${i*.7}s`)).join(""))},
+  dHold:o=>`<g transform="translate(${o*27} -24)"><path d="M-8 -10 h16 v12 a3 3 0 0 1 -3 3 h-10 a3 3 0 0 1 -3 -3z" fill="#7FB8E8"/><path d="M${o*8} -5 l${o*12} -9" stroke="#7FB8E8" stroke-width="3" stroke-linecap="round"/><path d="M-6 -10 q6 -9 12 0" stroke="#5E9BD0" stroke-width="2" fill="none"/></g>`,
+  front:L=>{const sx=L.dx+L.dO*47,sy=L.G-38;return [0,1,2].map(i=>`<ellipse class="drip" cx="${sx+i*2*L.dO}" cy="${sy}" rx="1.4" ry="2.4" fill="#7FB8E8" style="animation-delay:-${i*.33}s"/>`).join("")},
+  lines:["お花に水やり🌷","大きく育ってね","家庭菜園で食費も節約！"]},
+ {id:"bubbles",name:"シャボン玉",dry:1,zone:"r",
+  rHold:o=>`<g transform="translate(${o*22} -24)"><path d="M0 0 L${o*10} -14" stroke="#B79AE0" stroke-width="2"/><circle cx="${o*13}" cy="-19" r="5" fill="none" stroke="#B79AE0" stroke-width="2"/></g>`,
+  front:L=>{const x=L.rx+L.rO*35,y=L.G-43;return [0,1,2,3,4,5,6].map(i=>`<circle class="bbl" cx="${x}" cy="${y}" r="${4+(i*7)%8}" fill="#fff" fill-opacity=".3" stroke="#A9D8F5" stroke-width="1.2" style="--dx:${L.rO*(18+i*9)}px;animation-delay:-${(i*.55).toFixed(2)}s"/>`).join("")},
+  lines:["シャボン玉ふわふわ","どこまで飛ぶかな？","泡みたいに消えるムダ遣いに注意"]},
+ {id:"piggy",name:"コツコツ貯金",any:1,zone:"r",
+  back:L=>{const f=L.rOut<180?1:-1;return gg(L.rOut,L.G,`<rect x="-16" y="-8" width="7" height="8" rx="2" fill="#EE8FAA"/><rect x="9" y="-8" width="7" height="8" rx="2" fill="#EE8FAA"/><ellipse cy="-24" rx="27" ry="21" fill="url(#gPig)"/><path d="M${f*4} -42 l${f*8} -9 l${f*5} 11z" fill="#F49AB4"/><ellipse cx="${f*25}" cy="-22" rx="6" ry="7" fill="#F49AB4"/><circle cx="${f*24}" cy="-24" r="1.4" fill="#B5586F"/><circle cx="${f*26}" cy="-20" r="1.4" fill="#B5586F"/><circle cx="${f*13}" cy="-30" r="2.2" fill="#3A3340"/><rect x="-8" y="-46" width="14" height="3" rx="1.5" fill="#B5586F"/><path d="M${-f*27} -26 q${-f*8} -2 ${-f*5} 5 q${f*3} 4 ${-f*3} 6" stroke="#EE8FAA" stroke-width="2" fill="none"/>`)+
+   [0,1].map(i=>gg(L.rOut-1,L.G-46,`<ellipse rx="6" ry="6" fill="#FFD24D" stroke="#E5A92B" stroke-width="1.5"/><text x="-3" y="3" font-size="8" fill="#B27A12" font-weight="700">¥</text>`,"coin",`animation-delay:-${i*1.3}s`)).join("")},
+  lines:["コツコツ貯金💰","ちりも積もれば山となる","今日も1円を大切に"]},
+ {id:"tea",name:"ティータイム",any:1,zone:"r",
+  back:L=>gg(L.rOut,L.G,`<rect x="-3" y="-26" width="6" height="26" fill="#C49A6C"/><ellipse cy="-28" rx="30" ry="6" fill="#E8C9A0"/><g transform="translate(-9 -34)"><ellipse cy="-7" rx="11" ry="9" fill="${L.col}"/><rect x="-4" y="-18" width="8" height="4" rx="2" fill="${L.col}"/><path d="M10 -9 q8 -4 10 -10" stroke="${L.col}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M-10 -10 q-7 0 -6 6" stroke="${L.col}" stroke-width="2.5" fill="none"/></g><g transform="translate(15 -34)"><path d="M-6 -8 h12 l-2 8 h-8z" fill="#fff" stroke="#D8CCE0"/><path class="steam" d="M-1 -12 q-3 -4 0 -8 q3 -4 0 -8" stroke="#C9BFCF" stroke-width="1.6" fill="none"/></g>`),
+  lines:["ティータイム☕","ほっとひと息つこう","おうちカフェは節約になるね"]},
+ {id:"ball",name:"ボール遊び",day:1,dry:1,zone:"r",dPose:"happy",rPose:"happy",
+  front:L=>gg(L.mid,L.G,`<circle cy="-10" r="9" fill="#fff" stroke="#3A3340" stroke-width="1"/><path d="M-4 -14 l4 -3 4 3 -1.5 5 h-5z" fill="#3A3340"/>`,"pass"),
+  lines:["ボール遊び⚽","パス！ナイスキャッチ","体を動かすのはタダで最高！"]},
+ {id:"stars",name:"星空観察",night:1,zone:"r",
+  back:L=>{const f=L.rOut<180?1:-1;return gg(L.rOut,L.G,`<path d="M0 -30 L-12 0 M0 -30 L12 0 M0 -30 V0" stroke="#8C7A94" stroke-width="2.5"/><g transform="translate(0 -32) rotate(${f*35})"><rect x="-6" y="-28" width="12" height="32" rx="4" fill="#7884C6"/><rect x="-7.5" y="-30" width="15" height="5" rx="2" fill="#5A64A0"/></g>`)},
+  front:()=>`<g class="shoot"><path d="M0 0 l-34 -12" stroke="#FFF8D6" stroke-width="2" stroke-linecap="round" opacity=".8"/><circle r="2.5" fill="#fff"/></g>`,
+  lines:["星がきれいだね✨","流れ星にお願いしよ","今月も目標達成できますように"]},
+ {id:"camp",name:"キャンプ",eve:1,dry:1,zone:"r",
+  back:L=>gg(L.rOut,L.G,`<path d="M-32 0 L0 -52 L32 0Z" fill="${L.col}"/><path d="M0 -52 L-11 0 h22Z" fill="#000" opacity=".18"/><path d="M0 -52 L-6 -60 M0 -52 L6 -60" stroke="#8C7A94" stroke-width="2"/>`)+
+   gg(L.mid,L.G+2,`<circle cy="-8" r="26" fill="url(#gGlow)" class="glow"/><path d="M-12 -2 L12 -8 M-12 -8 L12 -2" stroke="#7A4A2E" stroke-width="4" stroke-linecap="round"/><path class="flame" d="M0 -6 q-10 -8 -2 -24 q2 8 6 4 q6 10 -4 20z" fill="#FF9F3C"/><path class="flame" style="animation-delay:-.2s" d="M0 -7 q-5 -5 0 -14 q5 7 0 14z" fill="#FFE066"/>`),
+  rHold:o=>`<g transform="translate(${-o*22} -22)"><path d="M0 0 L${-o*20} 12" stroke="#A8794C" stroke-width="2" stroke-linecap="round"/><rect x="${-o*22-4}" y="8" width="7" height="7" rx="2" fill="#fff" stroke="#E8D6C6"/></g>`,
+  lines:["キャンプファイヤー🔥","マシュマロ焼けたよ","自然の中なら安上がりで楽しい"]},
+ {id:"flowers",name:"お花畑",day:1,dry:1,months:[3,4,5,6,9,10],zone:"r",
+  back:L=>{let s="";for(let i=0;i<14;i++){const x=(12+L.r()*336)|0;if(Math.abs(x-L.dx)<30||Math.abs(x-L.rx)<26)continue;s+=gg(x,L.G+4+(L.r()*8|0),mFlower(M_COL[i%5],.7+L.r()*.3),"sway",`animation-delay:-${(L.r()*3).toFixed(1)}s`)}return s},
+  front:L=>[0,1].map(i=>gg(70+i*170,70+i*20,`<g class="flap"><ellipse cx="-5" cy="0" rx="5" ry="7" fill="${M_COL[(i+3)%5]}"/><ellipse cx="5" cy="0" rx="5" ry="7" fill="${M_COL[(i+3)%5]}"/></g><rect x="-1" y="-5" width="2" height="10" rx="1" fill="#3A3340"/>`,"flutter",`animation-delay:-${i*3}s`)).join(""),
+  lines:["お花畑だよ🌼","ちょうちょが遊びに来た！","季節を楽しむのはプライスレス"]},
+ {id:"puddle",name:"水たまり",wet:1,zone:"d",dPose:"happy",
+  back:L=>gg(L.dx,L.G+3,`<ellipse rx="36" ry="6" fill="#A9C4E6"/>`)+
+   gg(L.dOut,L.G,`<ellipse cx="0" cy="-8" rx="12" ry="9" fill="#7CC27C"/><circle cx="-5" cy="-16" r="4" fill="#7CC27C"/><circle cx="5" cy="-16" r="4" fill="#7CC27C"/><circle cx="-5" cy="-16" r="1.8" fill="#333"/><circle cx="5" cy="-16" r="1.8" fill="#333"/><path d="M-4 -7 q4 3 8 0" stroke="#3E7A3E" stroke-width="1.2" fill="none"/>`,"frog"),
+  front:L=>[-1,1,-.5,.5].map((k,i)=>`<ellipse class="splash" cx="${L.dx+k*22}" cy="${L.G}" rx="1.8" ry="2.6" fill="#A9C4E6" style="--dx:${k*14}px;animation-delay:-${i*.12}s"/>`).join(""),
+  lines:["雨の日もたのしい","水たまりジャンプ！","雨の日は家でのんびり節約デー"]},
+ {id:"teru",name:"てるてる坊主",wet:1,zone:"d",
+  back:L=>{const f=L.dOut<180?1:-1;return gg(L.dOut,L.G,`<path d="M${-f*14} 0 V-86 h${f*30}" stroke="#A8794C" stroke-width="3" fill="none" stroke-linecap="round"/>`)+
+   gg(L.dOut+f*12,L.G-86,`<path d="M0 0 v8" stroke="#999"/><circle cy="16" r="8" fill="#fff" stroke="#DDD"/><path d="M-8 20 q-3 12 -6 14 h28 q-3 -2 -6 -14z" fill="#fff" stroke="#DDD"/><circle cx="-3" cy="15" r="1.2" fill="#333"/><circle cx="3" cy="15" r="1.2" fill="#333"/><path d="M-2 19 q2 2 4 0" stroke="#333" fill="none"/>`,"hang")+
+   gg(L.dOut-f*16,L.G,`<path d="M-10 0 h18 q4 0 4 -4" stroke="#C9B37A" stroke-width="4" stroke-linecap="round" fill="none"/><circle cx="-2" cy="-7" r="7" fill="#D9A55B"/><path d="M-2 -7 m-4 0 a4 4 0 1 0 4 -4" stroke="#B07D3A" fill="none" stroke-width="1.4"/>`,"crawl")},
+  lines:["てるてる坊主つるしたよ","明日は晴れるかな？","雨の日は買い物ひかえめに"]},
+ {id:"snowball",name:"雪合戦",snow:1,zone:"d",dPose:"happy",rPose:"happy",
+  back:L=>gg(L.dOut,L.G,`<circle cx="0" cy="-14" r="14" fill="#fff" stroke="#DCE3EF" stroke-width="1.5"/><circle cx="0" cy="-36" r="10" fill="#fff" stroke="#DCE3EF" stroke-width="1.5"/><circle cx="-3" cy="-38" r="1.4" fill="#333"/><circle cx="3" cy="-38" r="1.4" fill="#333"/><path d="M0 -35 l7 2 -7 1z" fill="#F2994A"/><rect x="-8" y="-50" width="16" height="6" rx="1" fill="#4B3B66"/><path d="M-10 -26 h20" stroke="#D9443B" stroke-width="3"/>`),
+  front:L=>[0,1].map(i=>gg(L.mid,L.G-14,`<circle r="5" fill="#fff" stroke="#DCE3EF"/>`,"pass",`animation-delay:-${i*1.1}s`)).join(""),
+  lines:["雪合戦だ〜⛄","えいっ！当たった？","暖房の使いすぎに気をつけてね"]},
+ {id:"beach",name:"海",day:1,dry:1,months:[7,8],zone:"r",ground:"#F3E2B8",
+  horizon:L=>`<rect y="${L.G-40}" width="${L.W}" height="34" fill="url(#gSea)"/>`+[0,1].map(i=>`<g class="drift" style="animation-duration:${14+i*5}s;animation-delay:-${i*6}s"><path d="M0 ${L.G-26+i*10} q8 -4 16 0 q8 4 16 0" stroke="#fff" stroke-width="1.5" fill="none" opacity=".8"/></g>`).join(""),
+  back:L=>{const f=L.rOut<180?1:-1;return gg(L.rOut,L.G,`<path d="M0 0 V-58" stroke="#8C7A94" stroke-width="2.5"/><path d="M-30 -52 Q0 -82 30 -52Z" fill="#F28DB2"/><path d="M-10 -52 Q0 -82 10 -52Z" fill="#fff"/>`)+gg(L.rOut-f*-0+f*24,L.G,`<rect x="-10" y="-14" width="20" height="14" fill="#E8C98F"/><rect x="-6" y="-24" width="12" height="10" fill="#E8C98F"/><path d="M-10 -14 v-3 h4 v3 M6 -14 v-3 h4 v3" stroke="#E8C98F" stroke-width="3"/><path d="M0 -24 v-8 l6 3 -6 3" stroke="#8C7A94" fill="#E5574D"/>`)},
+  lines:["海に来たよ🏖","波の音が気持ちいい","日焼け止めは忘れずに"]},
+ {id:"leaves",name:"落ち葉",dry:1,months:[10,11],zone:"d",
+  back:L=>{let s="";const cols=["#E8964A","#D9673F","#F2B659","#C8553D"];for(let i=0;i<14;i++){const x=((L.r()-.5)*56)|0,y=-(L.r()*14)|0;s+=`<ellipse cx="${x}" cy="${y}" rx="7" ry="4" fill="${cols[i%4]}" transform="rotate(${(L.r()*180)|0} ${x} ${y})"/>`}
+   return gg(L.dOut,L.G,s)+[0,1,2].map(i=>gg(L.dOut,L.G-10,`<ellipse rx="5" ry="3" fill="${cols[i]}"/>`,"pop",`--dx:${(i-1)*20}px;animation-delay:-${i*.7}s`)).join("")},
+  lines:["落ち葉でふかふか🍂","焼きいも食べたいね","秋の味覚はお手ごろなうちに"]},
+ {id:"hanami",name:"お花見",day:1,dry:1,months:[3,4],zone:"r",petals:1,
+  back:L=>gg(L.rOut,L.G,`<path d="M-4 0 q2 -30 -6 -54 M-2 -38 q10 -10 18 -12" stroke="#8B5E3C" stroke-width="7" stroke-linecap="round" fill="none"/>`+[[-14,-66,18],[6,-74,20],[20,-56,15],[-28,-52,13],[-4,-50,14]].map(([x,y,r],i)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${i%2?"#F7C6D4":"#FBD9E3"}"/>`).join("")),
+  rHold:o=>`<g transform="translate(${o*22} -22) rotate(${o*20})"><path d="M0 4 V-26" stroke="#C49A6C" stroke-width="2"/><circle cy="-6" r="4.5" fill="#9AD08C"/><circle cy="-14" r="4.5" fill="#fff" stroke="#eee"/><circle cy="-22" r="4.5" fill="#F7B7CB"/></g>`,
+  lines:["お花見日和🌸","花よりだんご？","お花見はお弁当持参でお得に"]},
+ {id:"yoga",name:"朝のストレッチ",morning:1,dry:1,zone:"r",dPose:"exercise",rPose:"exercise",
+  back:L=>`<rect x="${L.dx-36}" y="${L.G-3}" width="72" height="7" rx="3.5" fill="#B79AE0"/><rect x="${L.rx-32}" y="${L.G-3}" width="64" height="7" rx="3.5" fill="#7FB8E8"/>`,
+  lines:["朝のストレッチ！","のびのび〜","健康は一番の節約だよ"]},
+ {id:"photo",name:"写真撮影",day:1,dry:1,zone:"r",dPose:"happy",
+  rHold:o=>`<g transform="translate(${-o*14} -34)"><rect x="-10" y="-7" width="20" height="14" rx="3" fill="#3A3340"/><circle r="4.5" fill="#7884C6" stroke="#fff" stroke-width="1.5"/><rect x="-7" y="-10" width="6" height="3" rx="1" fill="#3A3340"/><circle class="flash2" cx="${-o*6}" cy="-9" r="10" fill="#fff"/></g>`,
+  lines:["はい、チーズ📷","いい笑顔！","思い出はお金で買えないね"]},
+ {id:"balloons",name:"風船",dry:1,zone:"r",
+  back:L=>gg(L.rOut,L.G,`<rect x="-2" y="-12" width="4" height="12" fill="#A8794C"/>`+[[-14,62],[0,76],[14,58],[6,48]].map(([x,l],i)=>`<g transform="translate(0 -10) rotate(${x*.8})"><g class="sway" style="animation-delay:-${i*.7}s">${mBalloon(M_COL[i],l)}</g></g>`).join(""))+
+   gg(L.rOut+(L.rOut<180?30:-30),L.G-40,mBalloon(M_COL[4],20),"rise"),
+  lines:["風船いっぱい🎈","ふわふわ飛んでいきそう","ムダ遣いもふわっと飛ばそう"]},
+ {id:"cooking",name:"お料理",any:1,zone:"d",glasses:0,
+  back:L=>gg(L.dOut,L.G,`<rect x="-24" y="-30" width="48" height="30" rx="3" fill="#E8E2EC"/><rect x="-24" y="-34" width="48" height="5" rx="2" fill="#CFC5D6"/><circle cx="-10" cy="-38" r="0" fill="none"/><g transform="translate(0 -34)"><path d="M-14 0 a14 7 0 0 0 28 0z" fill="#5A5F7A"/><path d="M14 -2 h12" stroke="#5A5F7A" stroke-width="3" stroke-linecap="round"/><circle class="sizzle" cx="-4" cy="-2" r="4" fill="#FFD95A"/><circle cx="-4" cy="-2" r="1.8" fill="#F5A623"/></g>`+[0,1].map(i=>`<circle class="smoke" cx="${i*8-4}" cy="-42" r="5" fill="#fff" opacity=".7" style="animation-delay:-${i*1.4}s"/>`).join("")),
+  dHold:o=>`<g transform="translate(${o*27} -18) rotate(${o*30})"><rect x="-1.5" y="-18" width="3" height="18" rx="1.5" fill="#C49A6C"/><ellipse cy="-21" rx="5" ry="4" fill="#C49A6C"/></g>`,
+  lines:["今日は自炊の日🍳","目玉焼き上手に焼けた！","自炊は最強の節約術"]},
+ {id:"jump",name:"なわとび",day:1,dry:1,zone:"r",dPose:"hopfast",rPose:"hopfast",
+  front:L=>`<g class="rope"><path d="M${L.dx-30} ${L.G-24} Q${L.mid} ${L.G+18} ${L.rx+28} ${L.G-24}" stroke="${L.col}" stroke-width="2.5" fill="none" stroke-linecap="round"/></g>`,
+  lines:["なわとび勝負！","ぴょんぴょん！","運動はジムに行かなくてもできる"]}
+];
+
+/* ---------- 今日のシーン：AI（1日1回）か内蔵 ---------- */
+function themeOK(t,c){
+  const late=c.time==="yoru"||c.time==="night";
+  if(t.wet)return c.wet;
+  if(t.snow)return c.snowy;
+  if(c.wet||c.snowy)return !!t.any;
+  if(t.night)return late&&(!c.wx||c.wx.sky==="clear"||c.wx.sky==="partly");
+  if(t.eve&&!(c.time==="evening"||late))return false;
+  if(t.day&&late)return false;
+  if(t.morning&&c.time!=="morning")return false;
+  if(t.months&&!t.months.includes(c.mo))return false;
+  return true;
+}
+const SC={
+  get(){try{return JSON.parse(localStorage.getItem("kb_scene")||"null")}catch(e){return null}},
+  save(x){try{localStorage.setItem("kb_scene",JSON.stringify(x))}catch(e){}},
+  hist(){try{return JSON.parse(localStorage.getItem("kb_scene_hist")||"[]")}catch(e){return[]}},
+  busy:false,lastTry:0,
+  async gen(force){
+    if(!AI.on||this.busy)return;const d=today(),cur=this.get();
+    if(!force&&cur&&cur.date===d)return;if(!force&&Date.now()-this.lastTry<3600e3)return;
+    this.busy=true;this.lastTry=Date.now();
+    try{
+      const c=mCtx(),h=this.hist().filter(x=>x!==(cur&&cur.date===d?"":"")).slice(0,6);
+      const ok=TH.filter(t=>themeOK(t,{...c,time:"day"})&&!t.night&&!t.eve&&!t.morning);
+      if(!ok.length)return;
+      const wxs=c.wx?({clear:"晴れ",partly:"晴れときどきくもり",cloudy:"くもり",rain:"雨",thunder:"雷雨",snow:"雪",fog:"霧"}[c.wx.sky]+`、${Math.round(c.wx.t)}℃`):"不明";
+      const EVN={halloween:"ハロウィン",xmas:"クリスマス",newyear:"お正月",valentine:"バレンタイン",tanabata:"七夕",sakura:"桜の季節"};
+      const money=c.money==="over"?"予算オーバー（節約を応援してほしい）":c.money==="warn"?"少し使いすぎペース（やさしく注意）":c.money==="good"?"順調（ほめてほしい）":"不明";
+      const prompt=`家計簿アプリのマスコット「アヒル」と「ウサギ」（仲良しの2匹）の、今日のシーンを考えてください。
+今日：${c.mo}月${c.d}日(${WD[c.now.getDay()]}) ／ 季節：${{winter:"冬",spring:"春",summer:"夏",autumn:"秋"}[c.season]} ／ 行事：${EVN[c.ev]||"なし"} ／ 天気：${wxs}
+今月のお金：${money}
+最近使ったテーマ（今日は避ける）：${h.join(", ")||"なし"}
+次のテーマから、今日に一番合うものを1つ選んで theme に入れてください：
+${ok.map(t=>`- ${t.id}：${t.name}`).join("\n")}
+lines：2匹のセリフを4つ。それぞれ18文字以内のやさしく楽しい日本語。テーマ・季節・天気に合わせる。そのうち1つはお金や節約についての前向きなひとこと（今月のお金の状況に合わせる）。絵文字は使っても1つまで。「おはよう」など時刻に関係する言葉は使わない。
+item_svg：そのシーンに合うかわいい小物を1つ、SVGの中身だけ（<svg>タグは書かない）。座標は x 0〜60、y 0〜60 で、地面は y=60（小物の下端を地面につける）。使えるのは g, circle, ellipse, rect, path, polygon, line だけ。色は #RRGGBB。文字・画像・グラデーションは使わない。要素は20個まで。やわらかいパステル調のフラットなイラストで。`;
+      const schema={type:"OBJECT",properties:{theme:{type:"STRING",enum:ok.map(t=>t.id)},lines:{type:"ARRAY",items:{type:"STRING"}},item_svg:{type:"STRING"}},required:["theme","lines","item_svg"]};
+      const j=JSON.parse(await aiRun([{text:prompt}],schema,1));
+      if(!TH.some(t=>t.id===j.theme))return;
+      const lines=(Array.isArray(j.lines)?j.lines:[]).map(s=>String(s).trim().slice(0,30)).filter(Boolean).slice(0,4);
+      this.save({date:d,theme:j.theme,lines,svg:cleanSVG(j.item_svg||""),by:"ai"});
+      try{localStorage.setItem("kb_scene_hist",JSON.stringify([j.theme,...this.hist().filter(x=>x!==j.theme)].slice(0,7)))}catch(e){}
+      MS.idx=0;refreshMascot();
+    }catch(e){}finally{this.busy=false}
+  }
+};
+/* AIが描いた小物は、安全な図形だけ残す */
+function cleanSVG(src){
+  try{
+    const doc=new DOMParser().parseFromString(`<svg xmlns="http://www.w3.org/2000/svg">${String(src).replace(/<\/?svg[^>]*>/gi,"")}</svg>`,"image/svg+xml");
+    if(doc.getElementsByTagName("parsererror").length)return "";
+    const TAGS=new Set(["g","circle","ellipse","rect","path","polygon","polyline","line"]);
+    const ATTR=new Set(["d","cx","cy","r","rx","ry","x","y","width","height","points","x1","y1","x2","y2","fill","stroke","stroke-width","stroke-linecap","stroke-linejoin","opacity","fill-opacity","transform"]);
+    let n=0;
+    const walk=el=>{let out="";for(const ch of el.children){const t=ch.localName;if(!TAGS.has(t)||++n>40)continue;let a="";
+      for(const at of ch.attributes){const k=at.name,v=at.value;if(!ATTR.has(k)||v.length>600)continue;
+        if(k==="fill"||k==="stroke"){if(!/^(#[0-9a-f]{3,8}|none)$/i.test(v))continue}
+        else if(!/^[\d\s.,\-a-zA-Z()]*$/.test(v)||/url|script|expression/i.test(v))continue;
+        a+=` ${k}="${v}"`}
+      out+=`<${t}${a}>${t==="g"?walk(ch):""}</${t}>`}return out};
+    return walk(doc.documentElement);
+  }catch(e){return ""}
+}
+function mScene(c){
+  const ok=TH.filter(t=>themeOK(t,c)),rec=SC.get();
+  if(rec&&rec.date===today()){const t=TH.find(x=>x.id===rec.theme);if(t&&themeOK(t,c))return {t,lines:rec.lines&&rec.lines.length?rec.lines:t.lines,svg:rec.svg||"",by:rec.by}}
+  const h=SC.hist(),late=c.time==="yoru"||c.time==="night";
+  let i=((c.seed*37+(late?11:0))%ok.length+ok.length)%ok.length;
+  if(ok.length>1&&ok[i].id===h[0])i=(i+1)%ok.length;
+  if((c.money==="over"||c.money==="warn")&&c.seed%3===0){const p=ok.findIndex(t=>t.id==="piggy");if(p>=0)i=p}
+  const t=ok[i]||TH[0];return {t,lines:t.lines,svg:"",by:""};
+}
+
+/* ---------- キャラ ---------- */
+function mEyes(dx,y,mode){
+  const L=-dx,R=dx,k='stroke="#3A3340" fill="none" stroke-linecap="round"';
+  if(mode==="closed")return `<path d="M${L-4} ${y} q4 3 8 0M${R-4} ${y} q4 3 8 0" ${k} stroke-width="2.2"/>`;
+  if(mode==="happy")return `<path d="M${L-4} ${y+1} q4 -5 8 0M${R-4} ${y+1} q4 -5 8 0" ${k} stroke-width="2.4"/>`;
+  let s=`<g class="blink"><circle cx="${L}" cy="${y}" r="3.5" fill="#3A3340"/><circle cx="${R}" cy="${y}" r="3.5" fill="#3A3340"/><circle cx="${L+1.2}" cy="${y-1.3}" r="1.2" fill="#fff"/><circle cx="${R+1.2}" cy="${y-1.3}" r="1.2" fill="#fff"/></g>`;
+  if(mode==="sad")s+=`<path d="M${L-5} ${y-6} l8 -3M${R+5} ${y-6} l-8 -3" ${k} stroke-width="2"/>`;
+  return s;
+}
+const mEyeMode=p=>p==="sleep"?"closed":p==="sad"?"sad":p==="happy"||p==="clap"||p==="groove"||p==="hopfast"?"happy":"open";
+function mDuck(st){
+  const p=st.dPose;
+  const hat=st.ev==="halloween"?`<path d="M-24 -91 h46" stroke="#4B3B66" stroke-width="5" stroke-linecap="round"/><path d="M-14 -92 L3 -130 L14 -92Z" fill="#4B3B66"/><path d="M-12 -97 h25" stroke="#F28C28" stroke-width="3"/>`
+    :st.ev==="xmas"?`<path d="M-20 -91 Q0 -128 24 -104 L16 -92Z" fill="#D9443B"/><rect x="-22" y="-96" width="40" height="7" rx="3.5" fill="#fff"/><circle cx="25" cy="-104" r="5" fill="#fff"/>`
+    :p==="sleep"?`<path d="M-20 -90 Q4 -124 28 -98 L18 -88Z" fill="#8B97DC"/><circle cx="29" cy="-97" r="4.5" fill="#fff"/>`:"";
+  const beak=p==="sad"||p==="sleep"?`<ellipse cx="0" cy="-64" rx="9" ry="4.5" fill="#F2994A"/>`:`<path d="M-10 -66 q10 -6 20 0 q-10 10 -20 0z" fill="#F2994A"/><path d="M-6 -65 q6 3 12 0" stroke="#D97A2B" stroke-width="1.2" fill="none"/>`;
+  const scarf=st.wx&&st.wx.cold&&st.ev!=="xmas"?`<path d="M-22 -50 q22 11 44 0 l-1 8 q-21 9 -42 0z" fill="#7FB8E8"/><rect x="-16" y="-46" width="8" height="18" rx="3" fill="#7FB8E8"/>`:"";
+  const glasses=st.dGlasses&&p!=="sleep"?`<g stroke="#5A4A66" stroke-width="1.6" fill="#fff" fill-opacity=".25"><circle cx="-9" cy="-76" r="6.5"/><circle cx="9" cy="-76" r="6.5"/><path d="M-2.5 -76 h5" fill="none"/></g>`:"";
+  return `<g class="ch duck k-${p}">
+    <ellipse cx="-11" cy="-4" rx="9" ry="4" fill="#F2994A"/><ellipse cx="11" cy="-4" rx="9" ry="4" fill="#F2994A"/>
+    <path class="tail" d="M24 -44 l16 -12 -3 20z" fill="#FFC93C"/>
+    <ellipse cx="0" cy="-32" rx="31" ry="27" fill="url(#gDuck)"/><ellipse cx="0" cy="-24" rx="18" ry="13" fill="#FFF1B0" opacity=".8"/>
+    <g class="arm armL"><ellipse cx="-27" cy="-31" rx="8" ry="14" fill="#F7C12F"/></g>
+    <g class="arm armR"><ellipse cx="27" cy="-31" rx="8" ry="14" fill="#F7C12F"/></g>
+    <circle cx="0" cy="-72" r="24" fill="url(#gDuck)"/>
+    <path d="M-3 -95 q2 -10 7 -4 q3 -7 6 1" stroke="#F7C12F" stroke-width="3" fill="none" stroke-linecap="round"/>
+    ${mEyes(9,-76,mEyeMode(p))}
+    <circle cx="-16" cy="-64" r="4.5" fill="#FF9F95" opacity=".55"/><circle cx="16" cy="-64" r="4.5" fill="#FF9F95" opacity=".55"/>
+    ${scarf}${beak}${glasses}${hat}${st.dHold}</g>`;
+}
+function mRab(st){
+  const p=st.rPose,S='stroke="#E3D6E6" stroke-width="2"';
+  const bc=st.ev==="halloween"?"#F28C28":st.ev==="newyear"?"#D9443B":M_COL[st.seed%5];
+  const bow=`<g transform="translate(-15 -91) rotate(-20)"><path d="M0 0 l-9 -6 v12z M0 0 l9 -6 v12z" fill="${bc}"/><circle r="3" fill="${bc}"/></g>`;
+  const scarf=st.ev==="xmas"||(st.wx&&st.wx.cold)?`<path d="M-20 -51 q20 10 40 0 l-1 7 q-19 8 -38 0z" fill="#D9443B"/><rect x="8" y="-48" width="7" height="16" rx="3" fill="#D9443B"/>`:"";
+  const mouth=p==="sad"?"M-4 -57 q4 -4 8 0":p==="sleep"?"M-2 -59 h4":"M-5 -61 q2.5 3 5 0 q2.5 3 5 0";
+  return `<g class="ch rab k-${p}">
+    <ellipse cx="-10" cy="-4" rx="9" ry="5" fill="#fff" ${S}/><ellipse cx="10" cy="-4" rx="9" ry="5" fill="#fff" ${S}/>
+    <circle class="tail2" cx="25" cy="-20" r="7" fill="#fff" ${S}/>
+    <ellipse cx="0" cy="-30" rx="25" ry="26" fill="url(#gRab)" ${S}/>
+    <g class="arm armL"><ellipse cx="-22" cy="-32" rx="6.5" ry="12" fill="#fff" ${S}/></g>
+    <g class="arm armR"><ellipse cx="22" cy="-32" rx="6.5" ry="12" fill="#fff" ${S}/></g>
+    <g class="ear earL"><ellipse cx="-10" cy="-107" rx="8" ry="24" fill="#fff" ${S}/><ellipse cx="-10" cy="-105" rx="4" ry="16" fill="#F7C6D4"/></g>
+    <g class="ear earR"><ellipse cx="10" cy="-107" rx="8" ry="24" fill="#fff" ${S}/><ellipse cx="10" cy="-105" rx="4" ry="16" fill="#F7C6D4"/></g>
+    <circle cx="0" cy="-70" r="23" fill="url(#gRab)" ${S}/>
+    ${mEyes(9,-73,mEyeMode(p))}
+    <circle cx="-15" cy="-62" r="4.5" fill="#FF9FB5" opacity=".5"/><circle cx="15" cy="-62" r="4.5" fill="#FF9FB5" opacity=".5"/>
+    <ellipse cx="0" cy="-65" rx="3" ry="2.2" fill="#F08AA5"/>
+    <path d="${mouth}" stroke="#3A3340" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    ${scarf}${bow}${st.rHold}</g>`;
+}
+const M_EVENT={
+  halloween:`<ellipse cx="0" cy="-14" rx="18" ry="14" fill="#F28C28"/><ellipse cx="0" cy="-14" rx="7" ry="14" fill="#F59E3C"/><rect x="-2" y="-32" width="4" height="7" rx="2" fill="#6B8E3A"/><path d="M-9 -16 l3 -5 3 5zM3 -16 l3 -5 3 5z" fill="#5A3A1A"/><path d="M-8 -9 q8 6 16 0 l-3 2 -2 -2 -3 2 -3 -2 -2 2z" fill="#5A3A1A"/>`,
+  xmas:`<rect x="-14" y="-24" width="28" height="24" rx="3" fill="#D9443B"/><rect x="-3" y="-24" width="6" height="24" fill="#FFD95A"/><rect x="-16" y="-28" width="32" height="6" rx="2" fill="#E5574D"/><path d="M0 -28 q-10 -12 -12 -2 q4 4 12 2 q10 -12 12 -2 q-4 4 -12 2" fill="#FFD95A"/>`,
+  newyear:`<rect x="-16" y="-6" width="32" height="6" rx="2" fill="#E9D5A8"/><ellipse cx="0" cy="-12" rx="15" ry="7" fill="#fff" stroke="#E6E0E6" stroke-width="1.5"/><ellipse cx="0" cy="-22" rx="11" ry="6" fill="#fff" stroke="#E6E0E6" stroke-width="1.5"/><circle cx="0" cy="-31" r="6" fill="#F5A623"/>`,
+  valentine:`<path d="M0 -4 C-22 -16 -14 -34 0 -24 C14 -34 22 -16 0 -4Z" fill="#7A4A2E"/><path d="M-13 -20 q13 6 26 0" stroke="#F28DB2" stroke-width="3" fill="none"/>`
+};
+
+/* ---------- 画面 ---------- */
+function mascotHTML(){
+  const c=mCtx(),sc=mScene(c),t=sc.t;
+  const W=360,H=220,G=200,r=mRand(c.seed);
+  const swap=c.seed%2===1,dx=swap?232:148,rx=swap?148:232,dDir=rx>dx?1:-1;
+  const L={W,H,G,dx,rx,dO:-dDir,rO:dDir,dOut:swap?308:62,rOut:swap?62:308,mid:(dx+rx)/2,col:M_COL[(c.seed+2)%5],r:mRand(c.seed+99)};
+  const g=c.time==="night"?"sleep":(c.money==="over"||c.money==="warn")?"sad":c.justAdded?"clap":null;
+  const st={...c,dPose:g||t.dPose||"idle",rPose:g||t.rPose||"idle",dGlasses:!!t.glasses,dHold:"",rHold:""};
+  if(st.dPose!=="sleep"){st.dHold=t.dHold?t.dHold(L.dO,L):"";st.rHold=c.wet?"":t.rHold?t.rHold(L.rO,L):""}
+  /* セリフ（大事な順。タップで次へ） */
+  const EVM={halloween:"ハッピーハロウィン🎃",xmas:"メリークリスマス🎄",newyear:"あけましておめでとう！",valentine:"ハッピーバレンタイン🍫",tanabata:"今日は七夕⭐ 願いごとした？",sakura:"桜の季節だね🌸"};
+  const TM={morning:"おはよう！今日もがんばろ",day:"こんにちは〜",evening:"おつかれさま！",yoru:"こんばんは。今日もおつかれ"};
+  const msgs=[];
+  if(c.time==="night")msgs.push("zzz…おやすみ…");
+  if(c.money==="over"||c.money==="warn")msgs.push(c.mmsg);
+  if(c.ev)msgs.push(EVM[c.ev]);
+  if(c.nToday)msgs.push(`今日は${c.nToday}件記録したね、えらい！`);else if(c.time==="evening"||c.time==="yoru")msgs.push("今日のレシート、忘れてない？");
+  msgs.push(...sc.lines);
+  if(c.wx&&c.time!=="night"){const WM={rain:"雨だね☔ 傘わすれずに",thunder:"雷こわい…⚡",snow:"雪だ〜 すべらないでね",fog:"霧がすごいね"};
+    const w=c.wx.hot?`暑いね…${Math.round(c.wx.t)}℃！水分とってね`:c.wx.cold?`さむい〜${Math.round(c.wx.t)}℃。あったかくしてね`:WM[c.wx.sky];if(w)msgs.push(w)}
+  if(c.money==="good")msgs.push(c.mmsg);
+  if(TM[c.time])msgs.push(TM[c.time]);
+  MS.st={msgs};if(MS.idx>=msgs.length)MS.idx=0;
+  /* 空 */
+  const wx=c.wx,ws=wx?wx.sky:null,grey=ws==="cloudy"||ws==="rain"||ws==="thunder"||ws==="fog"||ws==="snow";
+  const sky=c.time==="yoru"||c.time==="night"?"night":c.time;
+  const SKY=ws==="thunder"?(sky==="night"?["#1E2033","#363A52"]:["#7E879B","#B9C0CD"]):grey?{morning:["#DCD6D4","#F2EFEC"],day:["#BFCBD8","#E9EEF3"],evening:["#CDB3A8","#EBDCD4"],night:["#262A42","#41445C"]}[sky]
+    :{morning:["#FFD9C2","#FFF4EA"],day:["#BFE0FA","#EEF7FF"],evening:["#FFAF8A","#FFE3CF"],night:["#2B3060","#5A5F95"]}[sky];
+  const snowGround=wx?ws==="snow":c.season==="winter"&&(c.mo===1||c.mo===2);
+  const ground=t.ground||(snowGround?"#F4F6FB":sky==="night"?"#6E8A74":c.season==="autumn"?"#DCE6B8":"#C9E6B6");
+  const hill=snowGround?"#E3E9F3":sky==="night"?"#566E5E":c.season==="autumn"?"#E2C48C":"#ADD69A";
+  let s=`<defs>
+    <linearGradient id="msky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${SKY[0]}"/><stop offset="1" stop-color="${SKY[1]}"/></linearGradient>
+    <linearGradient id="gGround" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${ground}"/><stop offset="1" stop-color="${ground}" stop-opacity=".75"/></linearGradient>
+    <linearGradient id="gHill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${hill}"/><stop offset="1" stop-color="${ground}"/></linearGradient>
+    <radialGradient id="gDuck" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#FFF1A6"/><stop offset=".55" stop-color="#FFD84A"/><stop offset="1" stop-color="#F6BE2C"/></radialGradient>
+    <radialGradient id="gRab" cx=".38" cy=".3" r=".8"><stop offset=".45" stop-color="#FFFFFF"/><stop offset="1" stop-color="#EEE5F3"/></radialGradient>
+    <radialGradient id="gPig" cx=".4" cy=".35" r=".75"><stop offset="0" stop-color="#FFD3E0"/><stop offset="1" stop-color="#F49AB4"/></radialGradient>
+    <radialGradient id="gSun" cx=".5" cy=".5" r=".5"><stop offset=".45" stop-color="#FFF6C8" stop-opacity=".9"/><stop offset="1" stop-color="#FFF6C8" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gGlow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFB347" stop-opacity=".55"/><stop offset="1" stop-color="#FFB347" stop-opacity="0"/></radialGradient>
+    <linearGradient id="gPond" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9FD0F2"/><stop offset="1" stop-color="#6FAEDC"/></linearGradient>
+    <linearGradient id="gSea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7EC3EA"/><stop offset="1" stop-color="#A9DDF3"/></linearGradient>
+    <pattern id="chk" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="#fff"/><rect width="7" height="7" fill="#F6B8B8"/><rect x="7" y="7" width="7" height="7" fill="#F6B8B8"/></pattern>
+  </defs><rect width="${W}" height="${H}" fill="url(#msky)"/>`;
+  if(grey){}
+  else if(sky==="night"){
+    for(let i=0;i<16;i++)s+=`<circle class="tw" cx="${(r()*W)|0}" cy="${(8+r()*110)|0}" r="${(.8+r()*1.4).toFixed(1)}" fill="#FFF8D6" style="animation-delay:-${(r()*3).toFixed(1)}s"/>`;
+    s+=`<circle cx="304" cy="44" r="30" fill="url(#gSun)" opacity=".5"/><circle cx="304" cy="44" r="16" fill="#FFF3C4"/><circle cx="312" cy="38" r="14" fill="${SKY[0]}"/>`;
+  }else{
+    const [sx,sy,sr,sc2]=c.ev==="newyear"?[300,58,22,"#F05A4A"]:sky==="morning"?[48,118,22,"#FFC56E"]:sky==="day"?[312,42,18,"#FFD66B"]:[62,150,26,"#FF8E5A"];
+    s+=`<circle cx="${sx}" cy="${sy}" r="${sr*2.4}" fill="url(#gSun)"/><circle cx="${sx}" cy="${sy}" r="${sr}" fill="${sc2}"/>`;
+    if(sky==="day")s+=`<g transform="translate(${sx} ${sy})"><g class="spin">${[0,45,90,135,180,225,270,315].map(a=>`<path d="M0 -${sr+9} v-6" stroke="${sc2}" stroke-width="3" stroke-linecap="round" transform="rotate(${a})"/>`).join("")}</g></g>`;
+  }
+  /* 雲 */
+  const nC=ws==="clear"||ws==="fog"?0:ws==="partly"?2:ws?4:sky==="day"||sky==="morning"?2:0;
+  const cc=ws==="thunder"?"#8A90A2":ws==="rain"?"#C5CAD4":sky==="night"?"#5A5E78":"#fff";
+  for(let i=0;i<nC;i++){const y=(18+r()*60)|0,k=(.8+r()*.6).toFixed(2),du=((wx&&wx.windy?18:46)+r()*20)|0;
+    s+=`<g transform="translate(0 ${y})"><g class="drift" style="animation-duration:${du}s;animation-delay:-${(r()*du)|0}s"><g transform="scale(${k})" opacity=".95"><ellipse cx="0" cy="0" rx="30" ry="12" fill="${cc}"/><ellipse cx="14" cy="-8" rx="18" ry="13" fill="${cc}"/><ellipse cx="-12" cy="-5" rx="14" ry="10" fill="${cc}"/></g></g></g>`}
+  if(ws==="thunder")s+=`<path class="bolt" d="M262 30 l-14 30 h12 l-10 28 26 -36 h-12 l10 -22z" fill="#FFE066"/>`;
+  if(c.ev==="halloween")[[70,40],[118,68],[250,30]].forEach(([x,y],i)=>s+=gg(x,y,`<path d="M0 0 q-6 -8 -14 -4 q4 2 2 6 q6 -4 12 -2 q6 -2 12 2 q-2 -4 2 -6 q-8 -4 -14 4z" fill="#3B3150"/>`,"bat",`animation-delay:-${i*1.7}s`));
+  /* 丘と地面 */
+  s+=`<ellipse cx="60" cy="${G+30}" rx="180" ry="58" fill="url(#gHill)"/><ellipse cx="310" cy="${G+38}" rx="160" ry="52" fill="url(#gHill)" opacity=".85"/>`;
+  if(t.horizon)s+=t.horizon(L);
+  s+=`<rect y="${G-8}" width="${W}" height="${H-G+8}" fill="url(#gGround)"/>`;
+  if(!snowGround&&!t.ground)for(let i=0;i<10;i++){const x=(r()*W)|0,y=G-2+(r()*14|0);s+=`<path d="M${x} ${y} l-2 -5 M${x} ${y} l0 -6 M${x} ${y} l2 -5" stroke="${sky==="night"?"#5E7A66":"#9FCB8A"}" stroke-width="1.4" stroke-linecap="round"/>`}
+  if(ws==="fog")for(let i=0;i<3;i++)s+=`<g class="drift" style="animation-duration:${30+i*8}s;animation-delay:-${i*9}s"><rect x="0" y="${40+i*45}" width="260" height="26" rx="13" fill="#fff" opacity=".6"/></g>`;
+  /* シーン（後ろ） */
+  if(t.back)s+=t.back(L);
+  /* AIの小物と行事の小物は、シーンと反対側に */
+  const zO=t.zone==="d"?L.rOut:L.dOut;
+  if(sc.svg)s+=`<g transform="translate(${zO-22} ${G-44}) scale(.73)">${sc.svg}</g>`;
+  if(c.ev&&M_EVENT[c.ev])s+=gg(sc.svg?zO+(zO<180?40:-40):zO,G,M_EVENT[c.ev]);
+  /* 雨の日：水たまりとウサギの傘 */
+  if(c.wet&&t.id!=="puddle")[dx-44,rx+L.rO*58].forEach((x,i)=>s+=`<ellipse cx="${x}" cy="${G+3}" rx="16" ry="3.5" fill="#A9C4E6" opacity=".7"/>`+gg(x,G+3,`<ellipse rx="6" ry="1.5" fill="none" stroke="#fff" stroke-width="1"/>`,"ripple",`animation-delay:-${i*.6}s`));
+  /* キャラ */
+  const shd=p=>p==="happy"||p==="hopfast"||p==="exercise"||p==="clap"?` shd-${p}`:"";
+  s+=`<ellipse class="shd${shd(st.dPose)}" cx="${dx}" cy="${G-1}" rx="30" ry="5" fill="#3A3340" opacity=".1"/><ellipse class="shd${shd(st.rPose)} rabs" cx="${rx}" cy="${G-1}" rx="26" ry="5" fill="#3A3340" opacity=".1"/>`;
+  s+=`<g transform="translate(${dx} ${G})">${mDuck(st)}</g><g transform="translate(${rx} ${G})">${mRab(st)}</g>`;
+  if(c.wet)s+=gg(rx+L.rO*24,G,`<path d="M0 -30 V-138" stroke="#8C7A94" stroke-width="2.5"/><g class="sway" style="animation-duration:4s"><path d="M-40 -136 Q0 -186 40 -136 q-10 -7 -20 0 q-10 -7 -20 0 q-10 -7 -20 0 q-10 -7 -20 0z" fill="${L.col}"/><path d="M0 -161 v-6" stroke="#8C7A94" stroke-width="3" stroke-linecap="round"/></g>`);
+  /* シーン（前） */
+  if(t.front&&st.dPose!=="sleep")s+=t.front(L);
+  /* 状況のエフェクト */
+  const fx=(x,y,tx,cls,col,i)=>`<text class="${cls}" x="${x}" y="${y}" font-size="15" fill="${col}" style="animation-delay:-${i*.9}s">${tx}</text>`;
+  if(st.dPose==="sleep")[dx,rx].forEach((x,j)=>{for(let i=0;i<2;i++)s+=fx(x+20+i*6,G-108+j*4,"z","up","#EDEBFF",i+j*1.4)});
+  if(g==="clap")[dx,rx].forEach((x,j)=>{for(let i=0;i<2;i++)s+=fx(x+(i?22:-30),G-100,"♥","up",i?"#F28DB2":"#F5A6C0",i+j*1.3)});
+  if(g==="sad")[dx,rx].forEach(x=>s+=`<path d="M${x+24} ${G-92} q5 7 0 10 q-5 -3 0 -10z" fill="#8EC5F0"/>`);
+  if(wx&&wx.hot&&st.dPose!=="sleep")[dx,rx].forEach(x=>s+=`<path class="tw" d="M${x-26} ${G-90} q5 7 0 10 q-5 -3 0 -10z" fill="#8EC5F0"/>`);
+  /* 降るもの：天気 → 季節 */
+  const kind=wx?(c.wet?"rain":ws==="snow"?"snow":wx.windy?"leaf":t.petals||c.ev==="sakura"?"petal":null)
+    :t.petals||c.ev==="sakura"?"petal":c.season==="winter"?"snow":c.season==="autumn"&&!c.ev?"leaf":null;
+  const nP=kind==="rain"?26:kind==="snow"&&wx?18:11;
+  if(kind)for(let i=0;i<nP;i++){
+    const x=(r()*W)|0,dl=(r()*7).toFixed(2),du=kind==="rain"?(.7+r()*.5).toFixed(2):(5+r()*4).toFixed(2);
+    const sh=kind==="snow"?`<circle r="${(2+r()*2).toFixed(1)}" fill="#fff" stroke="#DCE3EF" stroke-width=".6"/>`:kind==="petal"?`<ellipse rx="4" ry="2.6" fill="#F7B7CB"/>`
+      :kind==="leaf"?`<ellipse rx="5" ry="3" fill="${r()<.5?"#E8964A":"#D9673F"}"/>`:`<path d="M0 0 l-2 9" stroke="#8FB3E0" stroke-width="2" stroke-linecap="round"/>`;
+    s+=`<g transform="translate(${x} 0)"><g class="fall${kind==="rain"?" rainf":wx&&wx.windy?" blow":""}" style="animation-delay:-${dl}s;animation-duration:${du}s">${sh}</g></g>`;
+  }
+  if(ws==="thunder")s+=`<rect class="flash" width="${W}" height="${H}" fill="#fff"/>`;
+  const bar=c.B?(()=>{const p=Math.min(100,Math.round(c.spent/c.B*100)),cl=c.money==="over"?"var(--red)":c.money==="warn"?"#F2B659":"#8CC394";
+      return `<button class="mbar" id="mBudget"><span>今月 ${yenJ(c.spent)} / 予算 ${yenJ(c.B)}</span><span class="chev">›</span><i><b style="width:${p}%;background:${cl}"></b></i></button>`})()
+    :`<button class="mbar" id="mBudget"><span>月の予算を決めると、2匹が教えてくれるよ</span><span class="chev">›</span></button>`;
+  return `<div class="mascot" id="mascot"><div class="mstage"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="アヒルとウサギ：${esc(t.name)}">${s}</svg>
+    <div class="bub" id="mBub">${esc(msgs[MS.idx])}</div></div><button class="mchip">${sc.by==="ai"?"✨AIが考えた":"今日の"}シーン：${esc(t.name)}<span class="chev">›</span></button>${bar}</div>`;
+}
+function bindMascot(root){
+  const m=root.querySelector("#mascot");if(!m)return;
+  const svg=m.querySelector("svg");
+  svg.onclick=()=>{const L=MS.st.msgs;MS.idx=(MS.idx+1)%L.length;m.querySelector("#mBub").textContent=L[MS.idx];
+    svg.classList.remove("jump");void svg.getBoundingClientRect();svg.classList.add("jump");clearTimeout(MS.jt);MS.jt=setTimeout(()=>svg.classList.remove("jump"),600)};
+  m.querySelector(".mchip").onclick=openSceneInfo;
+  m.querySelector("#mBudget").onclick=openBudget;
+  SC.gen();
+}
+function refreshMascot(){
+  const m=view.querySelector("#mascot");if(!m)return;
+  const t=document.createElement("div");t.innerHTML=mascotHTML();m.replaceWith(t.firstElementChild);bindMascot(view);
+}
+function openBudget(){
+  openSheet(`<div class="sh"><button data-close>閉じる</button><b>月の予算</b><span style="width:52px"></span></div>
+    <div class="note">1か月に使う金額の目安です。アヒルとウサギが、今月のペースを見て喜んだり心配したりします。<br>決めない場合は、先月の同じ日までと比べます。</div>
+    <div class="group"><label class="row"><span>予算（円）</span><input id="bgIn" inputmode="numeric" placeholder="例 80000" value="${MS.budget||""}"></label></div>
+    <div class="btnrow">${MS.budget?'<button class="btn-g" id="bgDel">予算なしにする</button>':""}<button class="btn-p" id="bgSave">保存</button></div>`);
+  sheet.querySelector("#bgSave").onclick=()=>{const v=parseInt(sheet.querySelector("#bgIn").value.replace(/[^\d]/g,""),10)||0;
+    MS.budget=v;closeSheet();toast(v?"予算を保存しました":"予算をなしにしました");render()};
+  const d=sheet.querySelector("#bgDel");if(d)d.onclick=()=>{MS.budget=0;closeSheet();toast("予算をなしにしました");render()};
+}
+function openSceneInfo(){
+  const c=mCtx(),sc=mScene(c);
+  openSheet(`<div class="sh"><button data-close>閉じる</button><b>今日のシーン</b><span style="width:52px"></span></div>
+    <div class="note" style="font-size:15px"><b>${esc(sc.t.name)}</b>${sc.by==="ai"?"（AIが考えたシーン）":"（内蔵のシーン）"}<br><br>
+    ${AI.key?"毎日1回、GoogleのAI（Gemini）が天気・季節・今月のお金を見て、テーマ・セリフ・小物を考えます。無料枠の中で使います。":"設定 →「AI読み取り」でGeminiのキーを入れると、毎日AIがシーンを考えるようになります。キーがなくても、内蔵の25シーンから毎日変わります。"}<br><br>
+    雨・雪・夜などに合わないシーンの時は、その時に合うシーンに自動で切り替わります。</div>
+    ${AI.key?'<div class="btnrow"><button class="btn-p" id="scNew">AIで作り直す</button></div>':""}`);
+  const b=sheet.querySelector("#scNew");
+  if(b)b.onclick=async()=>{b.disabled=true;b.textContent="考え中…";SC.lastTry=0;await SC.gen(true);closeSheet();toast(SC.get()&&SC.get().date===today()?"新しいシーンにしました":"今は作れませんでした")};
+}
+function openWxPlace(){
+  openSheet(`<div class="sh"><button data-close>閉じる</button><b>天気の場所</b><span style="width:52px"></span></div>
+    <div class="note">アヒルとウサギが今の天気（雨・雪・晴れ・気温）に合わせて動きます。天気はOpen-Meteo（無料）から30分ごとに取得します。</div>
+    <div class="group"><button class="row" data-g="0"><span>刈谷市</span><span class="val">${WX.gps?"":"✓"}</span></button><button class="row" data-g="1"><span>現在地（位置情報を使う）</span><span class="val">${WX.gps?"✓":""}</span></button></div>
+    <div class="note">現在地の場合も、送るのはおおまかな位置（市くらい）だけです。家計簿の記録は送りません。</div>`);
+  sheet.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{WX.gps=b.dataset.g==="1";closeSheet();toast("天気を更新します");WX.load(true);render()});
+}
+setInterval(()=>{if(S.tab==="input"&&!document.hidden){refreshMascot();WX.load()}},5*60e3);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&S.tab==="input"){refreshMascot();WX.load()}});
+setTimeout(()=>WX.load(),1200);
+
 /* ---------- 入力 ---------- */
 function renderInput(){
   hdr.innerHTML=segHTML([["expense","支出"],["income","収入"]],S.inputType,"it");
@@ -373,7 +965,7 @@ function renderInput(){
     const cats=S.inputType==="income"?INC_CATS:EXP_CATS;if(!cats.some(c=>c[0]===S.form.category))S.form.category=cats[0][0];render()});
   const f=S.form,isExp=S.inputType==="expense";
   const recent=entries.slice().sort((a,b)=>(b.created||0)-(a.created||0)).slice(0,3);
-  view.innerHTML=`${backupBannerHTML()}
+  view.innerHTML=`${mascotHTML()}${backupBannerHTML()}
     ${isExp?`<button class="scancard" id="scanBtn"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M8 9h8M8 12h8M8 15h5"/></svg></span><span><b>レシートをスキャン${AI.key?'<span class="aion">AI</span>':""}</b><span>カメラにかざすだけで自動で登録</span></span></button>
     <div class="subacts"><button id="pickBtn">写真から読み取る</button></div>`:""}
     <div class="seclabel">${isExp?"手入力する場合":"収入を入力"}</div>
@@ -387,7 +979,7 @@ function renderInput(){
     ${recent.length?`<div class="seclabel" style="margin-top:30px">最近の登録</div><div class="group list">${recent.map(e=>itemHTML(e)).join("")}</div>`:""}`;
   const keep=()=>{f.amount=view.querySelector("#fAmount").value;f.memo=view.querySelector("#fMemo").value};
   if(isExp){view.querySelector("#scanBtn").onclick=openScanner;view.querySelector("#pickBtn").onclick=()=>document.getElementById("pick").click()}
-  bindBanner();
+  bindBanner();bindMascot(view);
   view.querySelector("#fCat").onclick=()=>{keep();pickCategory(S.inputType,f.category,c=>{f.category=c;render()})};
   view.querySelector("#fDate").onchange=e=>{keep();f.date=e.target.value||today();render()};
   view.querySelector("#fSave").onclick=async()=>{keep();
@@ -533,6 +1125,12 @@ function renderSettings(){
       <div class="row"><span>スキャンで登録した件数</span><span class="val">${scans}件</span></div>
       <button class="row" id="sHow"><span>自動登録・二重登録防止のしくみ</span><span class="chev">›</span></button>
     </div>
+    <div class="setlabel">アヒルとウサギ</div>
+    <div class="setgroup">
+      <button class="row" id="sBudget"><span>月の予算</span><span class="val">${MS.budget?yenJ(MS.budget):"なし"}<span class="chev">›</span></span></button>
+      <button class="row" id="sScene"><span>今日のシーン</span><span class="val">${AI.key?"AIが毎日考える":"内蔵25種類"}<span class="chev">›</span></span></button>
+      <button class="row" id="sWx"><span>天気の場所</span><span class="val">${WX.gps?"現在地":"刈谷市"}<span class="chev">›</span></span></button>
+    </div>
     <div class="setlabel">その他</div>
     <div class="setgroup">
       <button class="row" id="sAbout"><span>データとプライバシー</span><span class="chev">›</span></button>
@@ -540,6 +1138,7 @@ function renderSettings(){
     </div>
     <div class="note">記録 ${entries.length}件 ・ 広告なし ・ バージョン ${APP_VERSION}</div>`;
   view.querySelector("#sCsv").onclick=exportCSV;
+  view.querySelector("#sBudget").onclick=openBudget;view.querySelector("#sWx").onclick=openWxPlace;view.querySelector("#sScene").onclick=openSceneInfo;
   view.querySelector("#sSnap").onclick=openSnapshots;
   view.querySelector("#sAI").onclick=openAISettings;
   view.querySelector("#sBk").onclick=()=>infoSheet("バックアップ",`
@@ -558,6 +1157,7 @@ function renderSettings(){
     <b>二重登録の防止</b><br>同じ日付で、次のどれかに当てはまると登録しません。<br>・レシート番号が同じ<br>・時刻が同じで、合計・品目・店名のどれかが一致<br>・時刻が読めない時は、合計が同じで品目か店名が一致`);
   view.querySelector("#sAbout").onclick=()=>infoSheet("データとプライバシー",`
     記録はこのiPhoneの中だけに保存され、どこにも送信されません。<br><br>
+    アヒルとウサギの天気表示のために、おおまかな場所（刈谷市、または設定で現在地）を天気サービスOpen-Meteoに送ります。記録は送りません。<br><br>
     カメラの映像や写真は読み取りに使うだけで、保存しません。文字の読み取りもiPhoneの中で行います。<br><br>
     アプリを更新しても記録は消えません。ホーム画面のアイコンを削除したり、Safariのデータを消したりすると消えるので、「ファイル」アプリにバックアップしておくと安心です。`);
   view.querySelector("#sDel").onclick=()=>{
@@ -865,9 +1465,9 @@ const AI_SCHEMA={type:"OBJECT",properties:{receipts:{type:"ARRAY",items:{type:"O
   items:{type:"ARRAY",items:{type:"OBJECT",properties:{name:{type:"STRING"},price:{type:"INTEGER"},category:{type:"STRING",enum:CAT_ENUM}},required:["name","price","category"]}}},
   required:["store","date","time","total","category","items"]}}},required:["receipts"]};
 function blobToB64(blob){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(",")[1]);r.onerror=rej;r.readAsDataURL(blob)})}
-async function geminiCall(model,parts,json){
-  const body={contents:[{parts}],generationConfig:{temperature:0}};
-  if(json){body.generationConfig.responseMimeType="application/json";body.generationConfig.responseSchema=AI_SCHEMA}
+async function geminiCall(model,parts,json,temp){
+  const body={contents:[{parts}],generationConfig:{temperature:temp||0}};
+  if(json){body.generationConfig.responseMimeType="application/json";body.generationConfig.responseSchema=json===true?AI_SCHEMA:json}
   let res;
   try{res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
     {method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":AI.key},body:JSON.stringify(body)})}
@@ -877,11 +1477,11 @@ async function geminiCall(model,parts,json){
   if(/API[_ ]?key|API_KEY_INVALID|PERMISSION_DENIED|unregistered callers/i.test(t))return{err:"key"};
   return{err:res.status===429?"quota":res.status===404?"model":"fail"};
 }
-async function aiRun(parts,json){
+async function aiRun(parts,json,temp){
   const order=AI.good?[AI.good,...AI.models.filter(m=>m!==AI.good)]:AI.models;
   let last="fail";
   for(const m of order){
-    const r=await geminiCall(m,parts,json);
+    const r=await geminiCall(m,parts,json,temp);
     if(!r.err){AI.good=m;return r.text}
     if(r.err==="key"||r.err==="net")throw{code:r.err};
     last=r.err==="quota"&&last!=="fail"?last:r.err;
