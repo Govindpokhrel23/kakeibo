@@ -369,6 +369,8 @@ details pre{white-space:pre-wrap;font-size:11px;background:#fff;padding:8px;bord
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
 <!-- 読み取りエラーの記録・強制終了の検知（scan-log.js） -->
 <script src="scan-log.js"></script>
+<!-- AIに送る画像を白黒・切り抜き・縮小して軽くする（image-prep.js） -->
+<script src="image-prep.js"></script>
 <script>
 "use strict";
 /* ================= 基本 ================= */
@@ -386,7 +388,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const yenJ=n=>Math.round(n||0).toLocaleString("ja-JP")+"円";
 const WD="日月火水木金土";
-const APP_VERSION="2.3";
+const APP_VERSION="2.4";
 const dayLabel=s=>{const d=new Date(s+"T00:00");return `${d.getMonth()+1}月${d.getDate()}日(${WD[d.getDay()]})`};
 const md=s=>{const d=new Date(s+"T00:00");return `${d.getMonth()+1}/${d.getDate()}`};
 const monthKey=d=>d.getFullYear()+"-"+pad(d.getMonth()+1);
@@ -1631,13 +1633,15 @@ function toJpeg(src,crop,max,q){
    無料枠の上限（429）の時は少し待ってから次へ。
    それでもダメなら呼び出し元が端末内の文字読み取り（OCR）で登録する。 */
 const READ_STEPS=[
-  {models:["gemini-3.5-flash-lite","gemini-flash-lite-latest"],max:1280,q:0.75,label:"AIで読み取り中…"},
-  {models:["gemini-3.8-flash"],max:2000,q:0.9,label:"もう一度、くわしく読み取り中…"},
-  {models:["gemini-flash-latest","gemini-flash-lite-latest"],max:2000,q:0.9,label:"別のAIで読み取り中…"},
+  /* img：ImagePrep のプリセット。FAST＝切り抜き＋白黒で軽く、SHARP＝切り抜かず大きめで確実に */
+  {models:["gemini-3.5-flash-lite","gemini-flash-lite-latest"],img:ImagePrep.FAST,label:"AIで読み取り中…"},
+  {models:["gemini-3.8-flash"],img:ImagePrep.SHARP,label:"もう一度、くわしく読み取り中…"},
+  {models:["gemini-flash-latest","gemini-flash-lite-latest"],img:ImagePrep.SHARP,label:"別のAIで読み取り中…"},
 ];
-/* 元の画像を最初に1回だけ大きく写し取っておく（カメラが動いても同じ画像で再挑戦できる） */
+/* 元の画像を最初に1回だけ写し取っておく（カメラが動いても同じ画像で再挑戦できる）
+   SHARP の大きさ（短辺1200・長辺2400）まで残せば十分 */
 function snapCanvas(src,crop){
-  const s=Math.min(1,2000/Math.max(crop.w,crop.h));
+  const s=Math.min(1,ImagePrep.SHARP.maxShort/Math.min(crop.w,crop.h),ImagePrep.SHARP.maxLong/Math.max(crop.w,crop.h));
   const c=document.createElement("canvas");c.width=Math.round(crop.w*s);c.height=Math.round(crop.h*s);
   c.getContext("2d").drawImage(src,crop.x,crop.y,crop.w,crop.h,0,0,c.width,c.height);
   return c;
@@ -1650,7 +1654,9 @@ async function readReceiptsHard(src,crop,onStep){
     for(let i=0;i<READ_STEPS.length;i++){
       const st=READ_STEPS[i];if(onStep)onStep(st.label,i);
       try{
-        const list=await aiReadReceipts(await toJpeg(snap,full,st.max,st.q),st.models);
+        const blob=await ImagePrep.receiptJpeg(snap,full,st.img);
+        AI.lastBytes=blob.size;                               // 送った画像の大きさ（記録用）
+        const list=await aiReadReceipts(blob,st.models);
         if(list.length)return{list};
         lastCode="empty";
         ScanLog.add({code:"empty",model:AI.lastModel,detail:`${i+1}回目：レシートが見つからない／合計が0円`,ms:AI.lastMs});
