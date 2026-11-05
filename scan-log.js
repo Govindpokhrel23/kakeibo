@@ -76,6 +76,7 @@ const ScanLog = (() => {
     busy:    "Google側が混雑中",
     crash:   "アプリが強制終了（メモリ不足の可能性）",
     hidden:  "読み取り中に画面を閉じた・ロックした",
+    empty:   "レシート・合計が見つからなかった",
     fail:    "その他のエラー",
   };
   const reason = code => REASON[code] || REASON.fail;

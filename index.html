@@ -376,7 +376,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const yenJ=n=>Math.round(n||0).toLocaleString("ja-JP")+"円";
 const WD="日月火水木金土";
-const APP_VERSION="2.0";
+const APP_VERSION="2.1";
 const dayLabel=s=>{const d=new Date(s+"T00:00");return `${d.getMonth()+1}月${d.getDate()}日(${WD[d.getDay()]})`};
 const md=s=>{const d=new Date(s+"T00:00");return `${d.getMonth()+1}/${d.getDate()}`};
 const monthKey=d=>d.getFullYear()+"-"+pad(d.getMonth()+1);
@@ -1469,7 +1469,7 @@ const AI={
   models:["gemini-3.5-flash-lite","gemini-flash-lite-latest","gemini-3.8-flash","gemini-flash-latest"],
   /* モデルごとの「考える深さ」。小さいほど速い（minimal が最速）。
      flash は minimal 非対応なので low。表にないモデルは指定しない */
-  thinking:{"gemini-3.5-flash-lite":"minimal","gemini-flash-lite-latest":"minimal","gemini-3.8-flash":"low","gemini-flash-latest":"low"},
+  thinking:{"gemini-3.8-flash":"low","gemini-flash-latest":"low"},
   TIMEOUT_MS:20000,   // これ以上待っても返事がなければ「時間切れ」にする
   /* 前回うまくいったモデルを覚えておき、次回は最初からそれを使う（失敗の回り道を減らす） */
   get good(){try{return localStorage.getItem("gemini_good")||null}catch(e){return null}},
@@ -1515,12 +1515,12 @@ async function geminiCall(model,parts,json,temp,noThink){
   let detail=t;try{detail=JSON.parse(t).error.message||t}catch(e){}
   const base={status:res.status,detail,ms:Date.now()-t0};
   /* 思考レベルの指定がそのモデルで使えない時は、指定なしでもう一度 */
-  if(res.status===400&&lv&&!noThink&&/thinking/i.test(t))return geminiCall(model,parts,json,temp,true);
+  if(res.status===400&&lv&&!noThink)return geminiCall(model,parts,json,temp,true);
   if(/API[_ ]?key|API_KEY_INVALID|PERMISSION_DENIED|unregistered callers/i.test(t))return{err:"key",...base};
   return{err:res.status===429?"quota":res.status===404?"model":res.status===503||res.status===500?"busy":"fail",...base};
 }
-async function aiRun(parts,json,temp){
-  const order=AI.good?[AI.good,...AI.models.filter(m=>m!==AI.good)]:AI.models;
+async function aiRun(parts,json,temp,only){
+  const order=only?only:AI.good?[AI.good,...AI.models.filter(m=>m!==AI.good)]:AI.models;
   let last="fail";
   for(const m of order){
     const r=await geminiCall(m,parts,json,temp);
@@ -1532,8 +1532,8 @@ async function aiRun(parts,json,temp){
   throw{code:last};
 }
 /* 1枚の画像から、写っているレシートをすべて読み取る */
-async function aiReadReceipts(blob){
-  const txt=await aiRun([{inline_data:{mime_type:"image/jpeg",data:await blobToB64(blob)}},{text:AI_PROMPT}],true);
+async function aiReadReceipts(blob,models){
+  const txt=await aiRun([{inline_data:{mime_type:"image/jpeg",data:await blobToB64(blob)}},{text:AI_PROMPT}],true,0,models);
   let j;
   try{j=JSON.parse(txt)}
   catch(e){ScanLog.add({code:"parse",model:AI.lastModel,detail:txt.slice(0,160),ms:AI.lastMs});throw{code:"parse"}}
@@ -1562,12 +1562,52 @@ function aiErrMsg(code,status){
 /* 画像をAI用のJPEGに（最大1280px・メモリ上だけ）。
    レシートの文字はこの大きさで十分読める。小さいほど送信・AI処理が速い */
 const AI_IMG_MAX=1280,AI_IMG_Q=0.75;
-function toJpeg(src,crop){
-  const s=Math.min(1,AI_IMG_MAX/Math.max(crop.w,crop.h));
+function toJpeg(src,crop,max,q){
+  const s=Math.min(1,(max||AI_IMG_MAX)/Math.max(crop.w,crop.h));
   const c=document.createElement("canvas");c.width=Math.round(crop.w*s);c.height=Math.round(crop.h*s);
   c.getContext("2d").drawImage(src,crop.x,crop.y,crop.w,crop.h,0,0,c.width,c.height);
-  return new Promise(r=>c.toBlob(b=>{c.width=c.height=0;r(b)},"image/jpeg",AI_IMG_Q));
+  return new Promise(r=>c.toBlob(b=>{c.width=c.height=0;r(b)},"image/jpeg",q||AI_IMG_Q));
 }
+/* ================= 絶対に読み取る：段階的にやり直す =================
+   1回目：速いモデル（flash-lite）＋小さめの画像 → ほとんどはこれで終わる（速い）
+   2回目：読めなかった時だけ、賢いモデル（flash）＋大きく鮮明な画像
+   3回目：最後にもう一度、別の賢いモデルで
+   無料枠の上限（429）の時は少し待ってから次へ。
+   それでもダメなら呼び出し元が端末内の文字読み取り（OCR）で登録する。 */
+const READ_STEPS=[
+  {models:["gemini-3.5-flash-lite","gemini-flash-lite-latest"],max:1280,q:0.75,label:"AIで読み取り中…"},
+  {models:["gemini-3.8-flash"],max:2000,q:0.9,label:"もう一度、くわしく読み取り中…"},
+  {models:["gemini-flash-latest","gemini-flash-lite-latest"],max:2000,q:0.9,label:"別のAIで読み取り中…"},
+];
+/* 元の画像を最初に1回だけ大きく写し取っておく（カメラが動いても同じ画像で再挑戦できる） */
+function snapCanvas(src,crop){
+  const s=Math.min(1,2000/Math.max(crop.w,crop.h));
+  const c=document.createElement("canvas");c.width=Math.round(crop.w*s);c.height=Math.round(crop.h*s);
+  c.getContext("2d").drawImage(src,crop.x,crop.y,crop.w,crop.h,0,0,c.width,c.height);
+  return c;
+}
+/* 返り値：{list:[レシート…]} 読めた時 ／ {list:[],code:"…"} 全部ダメだった時 */
+async function readReceiptsHard(src,crop,onStep){
+  const snap=snapCanvas(src,crop),full={x:0,y:0,w:snap.width,h:snap.height};
+  let lastCode="empty";
+  try{
+    for(let i=0;i<READ_STEPS.length;i++){
+      const st=READ_STEPS[i];if(onStep)onStep(st.label,i);
+      try{
+        const list=await aiReadReceipts(await toJpeg(snap,full,st.max,st.q),st.models);
+        if(list.length)return{list};
+        lastCode="empty";
+        ScanLog.add({code:"empty",model:AI.lastModel,detail:`${i+1}回目：レシートが見つからない／合計が0円`,ms:AI.lastMs});
+      }catch(e){
+        lastCode=e&&e.code||"fail";
+        if(lastCode==="key"||lastCode==="net")break;      // キー間違い・オフラインはやり直しても無駄
+        if(lastCode==="quota")await sleep(4000);           // 無料枠：少し待ってから次のモデルへ
+      }
+    }
+    return{list:[],code:lastCode};
+  }finally{snap.width=snap.height=0}                    // メモリを開放
+}
+
 /* 同じレシートを何度もAIに送らないための文字の似かた */
 function textSim(a,b){
   if(!a||!b)return 0;
@@ -1669,26 +1709,33 @@ async function aiCapture(raw){
   lastSent=raw||lastSent;lastSentAt=Date.now();
   ScanLog.begin({model:AI.good||AI.models[0]});   // 落ちた時に次回起動で分かるように目印
   try{
-    const list=await aiReadReceipts(await toJpeg(video,cropOf()));
+    const r=await readReceiptsHard(video,cropOf(),label=>scanMsg(label));
     ScanLog.end();
     if(!scanning)return;
-    if(!list.length)scanMsg("レシートを読み取れませんでした。全体が枠に入るようにかざしてください","err");
-    else await registerScanned(list.map(aiEntry));
+    if(r.list.length){await registerScanned(r.list.map(aiEntry));return}
+    /* AIが全部ダメ → 端末内の文字読み取りで合計が取れていれば登録する（あとで直せる） */
+    const p=raw?parseReceipt(raw):null;
+    if(p&&p.total>0){
+      await registerScanned([makeEntry(p)]);
+      toast("AIが使えなかったので端末内の読み取りで登録しました。金額を確認してください");
+      return;
+    }
+    if(r.code==="quota")AI.pausedUntil=Date.now()+60000;
+    scanMsg(r.code==="empty"?"レシートの合計が見つかりません。レシート全体を枠に入れて、明るい所でかざしてください":aiErrMsg(r.code),"err");
   }catch(e){
     ScanLog.end();
     scanMsg(aiErrMsg(e&&e.code,e&&e.status),"err");
-    if(e&&e.code==="quota")AI.pausedUntil=Date.now()+60000;
   }finally{
     aiBusy=false;document.getElementById("shutter").disabled=false;holdUntil=Date.now()+3000;
   }
 }
 document.getElementById("shutter").onclick=async()=>{
   if(!scanning)return;
-  if(AI.on){lastSent="";aiCapture("");return}
+  if(AI.on){lastSent="";aiCapture(lastRaw);return}
   /* AIなし：端末内の読み取りで今のフレームを強制チェック */
   forceOnce=true;scanMsg("読み取り中…");
 };
-let forceOnce=false;
+let forceOnce=false,lastRaw="";
 async function scanLoop(){
   scanMsg("レシートを枠の中にかざしてください");
   while(scanning){
@@ -1700,6 +1747,7 @@ async function scanLoop(){
     if(!scanning)break;
     if(aiBusy)continue;
     const p=parseReceipt(data.text||"");
+    lastRaw=data.text||"";                       // シャッター用に直近の読み取り文字を保持
     const looksReceipt=p.raw.length>40&&/合計|小計|領収|お買上|点数|¥\s*\d/.test(p.raw);
     if(p.raw.length<15)lastSent="";            // 何も写っていない＝次のレシートを待つ
     if(AI.on){
@@ -1732,11 +1780,11 @@ document.getElementById("pick").onchange=async ev=>{
       const bmp=await createImageBitmap(files[k],{imageOrientation:"from-image"}).catch(()=>null);
       const src=bmp||await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=URL.createObjectURL(files[k])});
       if(AI.on){
-        show("AIで読み取り中…",0.5);
-        const blob=await toJpeg(src,{x:0,y:0,w:src.width,h:src.height});if(bmp&&bmp.close)bmp.close();
-        let rs;try{rs=await aiReadReceipts(blob)}catch(e){if(e&&e.code==="quota")AI.pausedUntil=Date.now()+60000;if(e&&(e.code==="key"||e.code==="net"||e.code==="timeout")){toast(aiErrMsg(e.code,e.status));fails++;continue}rs=null}
-        if(rs&&rs.length){for(const r of rs){const e=aiEntry(r);if(findDuplicate(e)){dups++;continue}await addEntry(e);added++;last=e;addedList.push(e)}continue}
-        if(rs){fails++;continue}
+        const r=await readReceiptsHard(src,{x:0,y:0,w:src.width,h:src.height},(label,i)=>show(label,0.3+i*0.2));
+        const rs=r.list;
+        if(r.code==="key"||r.code==="net"){toast(aiErrMsg(r.code));if(bmp&&bmp.close)bmp.close();fails++;continue}
+        if(rs&&rs.length){if(bmp&&bmp.close)bmp.close();for(const r of rs){const e=aiEntry(r);if(findDuplicate(e)){dups++;continue}await addEntry(e);added++;last=e;addedList.push(e)}continue}
+        /* AIで読めなかった時は、下の端末内の読み取りに進む（諦めない） */
       }
       if(typeof Tesseract==="undefined"){fails++;continue}
       const canvas=ocrCanvas(src,{x:0,y:0,w:src.width,h:src.height});if(bmp&&bmp.close)bmp.close();
