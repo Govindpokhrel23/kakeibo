@@ -357,6 +357,8 @@ details pre{white-space:pre-wrap;font-size:11px;background:#fff;padding:8px;bord
 <div class="toast" id="toast" hidden></div>
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
+<!-- 読み取りエラーの記録・強制終了の検知（scan-log.js） -->
+<script src="scan-log.js"></script>
 <script>
 "use strict";
 /* ================= 基本 ================= */
@@ -374,7 +376,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const yenJ=n=>Math.round(n||0).toLocaleString("ja-JP")+"円";
 const WD="日月火水木金土";
-const APP_VERSION="1.9";
+const APP_VERSION="2.0";
 const dayLabel=s=>{const d=new Date(s+"T00:00");return `${d.getMonth()+1}月${d.getDate()}日(${WD[d.getDay()]})`};
 const md=s=>{const d=new Date(s+"T00:00");return `${d.getMonth()+1}/${d.getDate()}`};
 const monthKey=d=>d.getFullYear()+"-"+pad(d.getMonth()+1);
@@ -1122,6 +1124,7 @@ function renderSettings(){
     <div class="setlabel">スキャン</div>
     <div class="setgroup">
       <button class="row" id="sAI"><span>AI読み取り（Google Gemini）</span><span class="val">${AI.key?"オン":"未設定"}<span class="chev">›</span></span></button>
+      <button class="row" id="sLog"><span>読み取りエラーの記録</span><span class="val">${ScanLog.load().length}件<span class="chev">›</span></span></button>
       <div class="row"><span>スキャンで登録した件数</span><span class="val">${scans}件</span></div>
       <button class="row" id="sHow"><span>自動登録・二重登録防止のしくみ</span><span class="chev">›</span></button>
     </div>
@@ -1141,13 +1144,16 @@ function renderSettings(){
   view.querySelector("#sBudget").onclick=openBudget;view.querySelector("#sWx").onclick=openWxPlace;view.querySelector("#sScene").onclick=openSceneInfo;
   view.querySelector("#sSnap").onclick=openSnapshots;
   view.querySelector("#sAI").onclick=openAISettings;
-  view.querySelector("#sBk").onclick=()=>infoSheet("バックアップ",`
+  view.querySelector("#sLog").onclick=openScanLog;
+  /* バックアップの説明シート。開いた後に「今すぐ保存」ボタンへ処理をつける
+     （以前は画面を描いた時点でボタンを探していて、見つからずに止まっていた） */
+  view.querySelector("#sBk").onclick=()=>{infoSheet("バックアップ",`
     記録はこのアプリの中に保存されています。アプリを更新しても消えません。<br><br>
     ただし、ホーム画面のアイコンを削除したり、iPhoneの設定でSafariのデータを消したりすると消えます。そのため「ファイル」アプリにも保存しておくと安心です。<br><br>
     <b>保存のしかた</b><br>下のボタン → 出てきた画面で「ファイルに保存」→「iCloud Drive」を選ぶ → 保存<br>（iCloud Driveに保存すると、iPhoneを失くしても残ります）<br><br>
     <b>戻すとき</b><br>設定 →「バックアップから戻す」→ 保存したファイルを選ぶ
     <div class="btnrow" style="padding:16px 0 0"><button class="btn-p" id="bkGo">今すぐ「ファイル」に保存</button></div>`);
-  sheet.querySelector("#bkGo").onclick=()=>{closeSheet();doBackup()};
+    sheet.querySelector("#bkGo").onclick=()=>{closeSheet();doBackup()}};
   view.querySelector("#sRs").onclick=()=>document.getElementById("rsFile").click();
   view.querySelector("#sHow").onclick=()=>infoSheet("自動登録のしくみ",`
     「レシートをスキャン」でカメラを開き、レシートを枠にかざすと、合計金額が読めた時点で自動で登録されます。続けて次のレシートをかざせば連続で登録できます。<br><br>
@@ -1184,13 +1190,25 @@ function openAISettings(){
   const val=()=>sheet.querySelector("#aiKey").value.trim();
   sheet.querySelector("#aiTest").onclick=async()=>{
     const old=AI.key;AI.key=val();msg("確認中…");
-    try{await aiRun([{text:"「OK」とだけ返してください"}],false);msg("✓ つながりました（"+AI.good+"）")}
-    catch(e){msg(aiErrMsg(e&&e.code))}
+    try{await aiRun([{text:"「OK」とだけ返してください"}],false);msg("✓ つながりました（"+AI.good+"・"+((AI.lastMs||0)/1000).toFixed(1)+"秒）")}
+    catch(e){msg(aiErrMsg(e&&e.code,e&&e.status))}
     finally{AI.key=old}
   };
   sheet.querySelector("#aiSave").onclick=()=>{AI.key=val();AI.good=null;AI.pausedUntil=0;closeSheet();toast(AI.key?"AI読み取りをオンにしました":"APIキーを削除しました");render()};
   const del=sheet.querySelector("#aiDel");
   if(del)del.onclick=()=>{AI.key="";closeSheet();toast("AI読み取りをオフにしました");render()};
+}
+/* 読み取りエラーの記録一覧（新しい順） */
+function openScanLog(){
+  const list=ScanLog.load();
+  const fmt=t=>{const d=new Date(t);return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`};
+  openSheet(`<div class="sh"><button data-close>閉じる</button><b>読み取りエラーの記録</b><span style="width:52px"></span></div>
+    <div class="note">${list.length?"新しい順に最大30件。エラーの理由と、かかった時間です。":"エラーはまだありません。"}</div>
+    ${list.length?`<div class="list" style="border-top:1px solid var(--line);border-bottom:1px solid var(--line)">${list.map(r=>`<div class="item">
+      <span class="top"><span>${esc(ScanLog.reason(r.code))}</span><span class="a">${fmt(r.at)}</span></span>
+      <small style="color:var(--sub);font-size:13px">${[r.status?"コード "+r.status:"",r.model,r.ms?(r.ms/1000).toFixed(1)+"秒":""].filter(Boolean).map(esc).join("・")}${r.detail?"<br>"+esc(r.detail):""}</small></div>`).join("")}</div>
+    <div class="btnrow"><button class="btn-g" id="logClr">記録を消す</button></div>`:""}`);
+  const b=sheet.querySelector("#logClr");if(b)b.onclick=()=>{ScanLog.clear();closeSheet();toast("記録を消しました");render()};
 }
 function infoSheet(t,html){openSheet(`<div class="sh"><button data-close>閉じる</button><b>${esc(t)}</b><span style="width:52px"></span></div><div class="note" style="font-size:15px">${html}</div>`)}
 function exportCSV(){
@@ -1308,8 +1326,11 @@ function getWorker(){
     .catch(e=>{workerP=null;throw e})}
   return workerP;
 }
-function ocrCanvas(src,crop){
-  const scale=Math.min(2.5,1800/Math.min(crop.w,crop.h),3000/Math.max(crop.w,crop.h));
+/* detect=true の時は「レシートが写っているか」の判定用。小さい画像で十分なので
+   メモリ使用量が約1/4になり、iPhoneでアプリが落ちにくく・速くなる */
+function ocrCanvas(src,crop,detect){
+  const scale=detect?Math.min(1,900/Math.min(crop.w,crop.h))
+    :Math.min(2.5,1800/Math.min(crop.w,crop.h),3000/Math.max(crop.w,crop.h));
   const w=Math.round(crop.w*scale),h=Math.round(crop.h*scale);
   const c=document.createElement("canvas");c.width=w;c.height=h;
   const g=c.getContext("2d",{willReadFrequently:true});g.drawImage(src,crop.x,crop.y,crop.w,crop.h,0,0,w,h);
@@ -1443,8 +1464,17 @@ function findDuplicate(e){
 const AI={
   get key(){try{return localStorage.getItem("gemini_key")||""}catch(e){return ""}},
   set key(v){try{v?localStorage.setItem("gemini_key",v):localStorage.removeItem("gemini_key")}catch(e){}},
-  models:["gemini-3.8-flash","gemini-flash-latest","gemini-3.5-flash-lite","gemini-flash-lite-latest"],
-  good:null,pausedUntil:0,
+  /* 速い順に試す。flash-lite は「考える時間」が最小で、レシート読み取りには十分な精度。
+     ダメな時だけ上位の flash に切り替える */
+  models:["gemini-3.5-flash-lite","gemini-flash-lite-latest","gemini-3.8-flash","gemini-flash-latest"],
+  /* モデルごとの「考える深さ」。小さいほど速い（minimal が最速）。
+     flash は minimal 非対応なので low。表にないモデルは指定しない */
+  thinking:{"gemini-3.5-flash-lite":"minimal","gemini-flash-lite-latest":"minimal","gemini-3.8-flash":"low","gemini-flash-latest":"low"},
+  TIMEOUT_MS:20000,   // これ以上待っても返事がなければ「時間切れ」にする
+  /* 前回うまくいったモデルを覚えておき、次回は最初からそれを使う（失敗の回り道を減らす） */
+  get good(){try{return localStorage.getItem("gemini_good")||null}catch(e){return null}},
+  set good(v){try{v?localStorage.setItem("gemini_good",v):localStorage.removeItem("gemini_good")}catch(e){}},
+  pausedUntil:0,
   get on(){return !!this.key&&Date.now()>this.pausedUntil}
 };
 const AI_PROMPT=`画像に写っている日本のレシート（領収証）を読み取ってください。
@@ -1465,25 +1495,38 @@ const AI_SCHEMA={type:"OBJECT",properties:{receipts:{type:"ARRAY",items:{type:"O
   items:{type:"ARRAY",items:{type:"OBJECT",properties:{name:{type:"STRING"},price:{type:"INTEGER"},category:{type:"STRING",enum:CAT_ENUM}},required:["name","price","category"]}}},
   required:["store","date","time","total","category","items"]}}},required:["receipts"]};
 function blobToB64(blob){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(",")[1]);r.onerror=rej;r.readAsDataURL(blob)})}
-async function geminiCall(model,parts,json,temp){
+async function geminiCall(model,parts,json,temp,noThink){
   const body={contents:[{parts}],generationConfig:{temperature:temp||0}};
   if(json){body.generationConfig.responseMimeType="application/json";body.generationConfig.responseSchema=json===true?AI_SCHEMA:json}
+  /* 考える時間を短くする設定（速さに一番効く） */
+  const lv=AI.thinking[model];
+  if(lv&&!noThink)body.generationConfig.thinkingConfig={thinkingLevel:lv};
+  /* 一定時間で打ち切る（電波が弱い時にずっと待たないように） */
+  const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),AI.TIMEOUT_MS);
+  const t0=Date.now();
   let res;
   try{res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-    {method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":AI.key},body:JSON.stringify(body)})}
-  catch(e){return{err:"net"}}
-  if(res.ok){const j=await res.json();return{text:(j.candidates?.[0]?.content?.parts||[]).filter(p=>!p.thought).map(p=>p.text||"").join("")}}
+    {method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":AI.key},body:JSON.stringify(body),signal:ctl.signal})}
+  catch(e){clearTimeout(timer);return{err:e&&e.name==="AbortError"?"timeout":"net",status:0,detail:String(e&&e.message||""),ms:Date.now()-t0}}
+  clearTimeout(timer);
+  if(res.ok){const j=await res.json();return{text:(j.candidates?.[0]?.content?.parts||[]).filter(p=>!p.thought).map(p=>p.text||"").join(""),ms:Date.now()-t0}}
   const t=await res.text().catch(()=>"");
-  if(/API[_ ]?key|API_KEY_INVALID|PERMISSION_DENIED|unregistered callers/i.test(t))return{err:"key"};
-  return{err:res.status===429?"quota":res.status===404?"model":"fail"};
+  /* Googleのエラー文（message）だけ取り出して記録用に残す */
+  let detail=t;try{detail=JSON.parse(t).error.message||t}catch(e){}
+  const base={status:res.status,detail,ms:Date.now()-t0};
+  /* 思考レベルの指定がそのモデルで使えない時は、指定なしでもう一度 */
+  if(res.status===400&&lv&&!noThink&&/thinking/i.test(t))return geminiCall(model,parts,json,temp,true);
+  if(/API[_ ]?key|API_KEY_INVALID|PERMISSION_DENIED|unregistered callers/i.test(t))return{err:"key",...base};
+  return{err:res.status===429?"quota":res.status===404?"model":res.status===503||res.status===500?"busy":"fail",...base};
 }
 async function aiRun(parts,json,temp){
   const order=AI.good?[AI.good,...AI.models.filter(m=>m!==AI.good)]:AI.models;
   let last="fail";
   for(const m of order){
     const r=await geminiCall(m,parts,json,temp);
-    if(!r.err){AI.good=m;return r.text}
-    if(r.err==="key"||r.err==="net")throw{code:r.err};
+    if(!r.err){AI.good=m;AI.lastMs=r.ms;AI.lastModel=m;return r.text}
+    ScanLog.add({code:r.err,status:r.status,model:m,detail:r.detail,ms:r.ms});   // 失敗の理由を記録
+    if(r.err==="key"||r.err==="net"||r.err==="timeout")throw{code:r.err,status:r.status};
     last=r.err==="quota"&&last!=="fail"?last:r.err;
   }
   throw{code:last};
@@ -1491,7 +1534,9 @@ async function aiRun(parts,json,temp){
 /* 1枚の画像から、写っているレシートをすべて読み取る */
 async function aiReadReceipts(blob){
   const txt=await aiRun([{inline_data:{mime_type:"image/jpeg",data:await blobToB64(blob)}},{text:AI_PROMPT}],true);
-  const j=JSON.parse(txt);
+  let j;
+  try{j=JSON.parse(txt)}
+  catch(e){ScanLog.add({code:"parse",model:AI.lastModel,detail:txt.slice(0,160),ms:AI.lastMs});throw{code:"parse"}}
   const list=Array.isArray(j.receipts)?j.receipts:Array.isArray(j)?j:j&&j.total?[j]:[];
   return list.filter(r=>r&&Math.round(+r.total||0)>0);
 }
@@ -1503,18 +1548,25 @@ function aiEntry(r){
     category:EXP_CATS.some(c=>c[0]===r.category)?r.category:guessCategory(store,""),items,raw:""};
   return makeEntry(p);
 }
-function aiErrMsg(code){
-  return code==="key"?"APIキーが正しくありません。設定 →「AI読み取り」で確認してください"
+function aiErrMsg(code,status){
+  const tag=status?`（エラー${status}）`:"";
+  return code==="timeout"?"AIの返事が遅いので中止しました。電波の良い場所でもう一度かざしてください"
+    :code==="parse"?"AIの返事を読み取れませんでした。もう一度かざしてください"
+    :code==="busy"?"Googleが混雑しています。少し待ってもう一度かざしてください"+tag
+    :code==="model"?"AIのモデルが見つかりません"+tag
+    :code==="key"?"APIキーが正しくありません。設定 →「AI読み取り」で確認してください"
     :code==="quota"?"AIの無料枠の上限に達しました。しばらくは端末内の読み取りを使います"
     :code==="net"?"インターネットにつながっていません"
-    :"AIで読み取れませんでした。もう一度かざしてください";
+    :"AIで読み取れませんでした。もう一度かざしてください"+tag;
 }
-/* 画像をAI用のJPEGに（最大2000px・メモリ上だけ） */
+/* 画像をAI用のJPEGに（最大1280px・メモリ上だけ）。
+   レシートの文字はこの大きさで十分読める。小さいほど送信・AI処理が速い */
+const AI_IMG_MAX=1280,AI_IMG_Q=0.75;
 function toJpeg(src,crop){
-  const s=Math.min(1,2000/Math.max(crop.w,crop.h));
+  const s=Math.min(1,AI_IMG_MAX/Math.max(crop.w,crop.h));
   const c=document.createElement("canvas");c.width=Math.round(crop.w*s);c.height=Math.round(crop.h*s);
   c.getContext("2d").drawImage(src,crop.x,crop.y,crop.w,crop.h,0,0,c.width,c.height);
-  return new Promise(r=>c.toBlob(b=>{c.width=c.height=0;r(b)},"image/jpeg",0.85));
+  return new Promise(r=>c.toBlob(b=>{c.width=c.height=0;r(b)},"image/jpeg",AI_IMG_Q));
 }
 /* 同じレシートを何度もAIに送らないための文字の似かた */
 function textSim(a,b){
@@ -1546,7 +1598,7 @@ async function openScanner(){
   sessionAdded=[];lastSent="";holdUntil=0;aiBusy=false;updateCount();vbox.style.width=vbox.style.height="0";
   scannerEl.hidden=false;scanMsg("カメラを起動中…");
   try{
-    stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:"environment"},width:{ideal:1920},height:{ideal:1440}}});
+    stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:"environment"},width:{ideal:1280},height:{ideal:960}}});
   }catch(e){
     scanMsg(e&&e.name==="NotAllowedError"?"カメラが許可されていません。iPhoneの設定 → Safari → カメラ を「許可」にしてください。":"カメラを起動できませんでした。","err");return;
   }
@@ -1571,7 +1623,9 @@ function closeScanner(){
   render();
   if(added.length)showReview(added);
 }
-document.addEventListener("visibilitychange",()=>{if(document.hidden&&!scannerEl.hidden)closeScanner()});
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&!scannerEl.hidden){
+  if(aiBusy){ScanLog.end();ScanLog.add({code:"hidden",model:AI.good||"",detail:"AI読み取り中に画面が閉じられました"})}
+  closeScanner()}});
 function updateCount(){document.getElementById("scanCount").textContent="登録 "+sessionAdded.length+"件"}
 /* 今回登録したレシートの確認（タップで中身を編集） */
 function showReview(list){
@@ -1613,13 +1667,16 @@ async function aiCapture(raw){
   aiBusy=true;document.getElementById("shutter").disabled=true;
   scanMsg("AIで読み取り中…");
   lastSent=raw||lastSent;lastSentAt=Date.now();
+  ScanLog.begin({model:AI.good||AI.models[0]});   // 落ちた時に次回起動で分かるように目印
   try{
     const list=await aiReadReceipts(await toJpeg(video,cropOf()));
+    ScanLog.end();
     if(!scanning)return;
     if(!list.length)scanMsg("レシートを読み取れませんでした。全体が枠に入るようにかざしてください","err");
     else await registerScanned(list.map(aiEntry));
   }catch(e){
-    scanMsg(aiErrMsg(e&&e.code),"err");
+    ScanLog.end();
+    scanMsg(aiErrMsg(e&&e.code,e&&e.status),"err");
     if(e&&e.code==="quota")AI.pausedUntil=Date.now()+60000;
   }finally{
     aiBusy=false;document.getElementById("shutter").disabled=false;holdUntil=Date.now()+3000;
@@ -1636,7 +1693,7 @@ async function scanLoop(){
   scanMsg("レシートを枠の中にかざしてください");
   while(scanning){
     if(aiBusy||!video.videoWidth){await sleep(200);continue}
-    const canvas=ocrCanvas(video,cropOf());
+    const canvas=ocrCanvas(video,cropOf(),AI.on);   // AIオン時は判定用の小さい画像
     progressCb=()=>{};
     let data;try{({data}=await (await getWorker()).recognize(canvas))}catch(e){await sleep(500);continue}
     canvas.width=canvas.height=0;
@@ -1677,7 +1734,7 @@ document.getElementById("pick").onchange=async ev=>{
       if(AI.on){
         show("AIで読み取り中…",0.5);
         const blob=await toJpeg(src,{x:0,y:0,w:src.width,h:src.height});if(bmp&&bmp.close)bmp.close();
-        let rs;try{rs=await aiReadReceipts(blob)}catch(e){if(e&&e.code==="quota")AI.pausedUntil=Date.now()+60000;if(e&&(e.code==="key"||e.code==="net")){toast(aiErrMsg(e.code));fails++;continue}rs=null}
+        let rs;try{rs=await aiReadReceipts(blob)}catch(e){if(e&&e.code==="quota")AI.pausedUntil=Date.now()+60000;if(e&&(e.code==="key"||e.code==="net"||e.code==="timeout")){toast(aiErrMsg(e.code,e.status));fails++;continue}rs=null}
         if(rs&&rs.length){for(const r of rs){const e=aiEntry(r);if(findDuplicate(e)){dups++;continue}await addEntry(e);added++;last=e;addedList.push(e)}continue}
         if(rs){fails++;continue}
       }
@@ -1703,6 +1760,8 @@ document.getElementById("pick").onchange=async ev=>{
     for(const e of entries)DB.put(e).catch(()=>{});
   }catch(e){toast("データを保存できません。プライベートブラウズをオフにしてください")}
   render();
+  /* 前回、AI読み取り中にアプリが落ちていたら知らせる（記録は設定から見られる） */
+  if(ScanLog.checkCrash())setTimeout(()=>toast("前回は読み取り中にアプリが再起動しました。設定 →「読み取りエラーの記録」"),900);
   if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
   if("serviceWorker" in navigator){
     const hadController=!!navigator.serviceWorker.controller;let reloaded=false;
